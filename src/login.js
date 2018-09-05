@@ -1,8 +1,7 @@
 import React from 'react';
-import axios from './axios';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
 
-export default class Registration extends React.Component {
+export default class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -13,19 +12,11 @@ export default class Registration extends React.Component {
         this[e.target.name] = e.target.value;
     }
     submit() {
-        console.log(
-            'Inside Axios :',
-            this.email,
-            this.pass,
-            this.first,
-            this.last
-        );
+        console.log('Inside Axios :', this.email, this.pass);
         axios
-            .post('/register', {
+            .post('/login', {
                 email: this.email,
-                pass: this.pass,
-                first: this.first,
-                last: this.last
+                pass: this.pass
             })
             .then(({ data }) => {
                 console.log('Data after saving user :', data);
@@ -41,20 +32,9 @@ export default class Registration extends React.Component {
     }
     render() {
         return (
-            <div>
+            <div className="login">
                 {this.state.error && <div className="error">TRY AGAIN</div>}
-                <input
-                    onChange={this.handleChange}
-                    className="btn"
-                    placeholder="First Name"
-                    name="first"
-                />
-                <input
-                    onChange={this.handleChange}
-                    className="btn"
-                    placeholder="Last Name"
-                    name="last"
-                />
+
                 <input
                     onChange={this.handleChange}
                     className="btn"
@@ -69,14 +49,8 @@ export default class Registration extends React.Component {
                     name="pass"
                 />
                 <button onClick={this.submit} className="cta">
-                    Register
+                    Login
                 </button>
-                <div id="loginBox">
-                    Already a member?<Link to="/login">
-                        {' '}
-                        Click here to login
-                    </Link>
-                </div>
             </div>
         );
     }

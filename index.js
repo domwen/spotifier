@@ -83,6 +83,46 @@ app.post('/register', (req, res) => {
         });
 });
 
+app.post('/login', (req, res) => {
+    let { email, pass } = req.body;
+    console.log('insider POST login');
+    console.log('req.body:', req.body);
+    db.getPassword(email)
+        .then(password => {
+            var userDataObject = password;
+            var storedPw = password.rows[0].password;
+            checkPass(pass, storedPw).then(result => {
+                if (result) {
+                    console.log(
+                        'inside POST login after checkpass :',
+                        userDataObject
+                    );
+                    req.session = {
+                        user: {
+                            userId: userDataObject.rows[0].id,
+                            firstName: userDataObject.rows[0].first,
+                            lastName: userDataObject.rows[0].last,
+                            signID: userDataObject.rows[0].id
+                        }
+                    };
+                    console.log('Password match');
+                    res.json({ success: true });
+                } else {
+                    throw 'error';
+                    console.log('Password unmatch');
+                }
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.render('login', {
+                layout: 'main',
+                error: true,
+                errMessage: err
+            });
+        });
+});
+
 app.listen(8080, function() {
     console.log("I'm listening.");
 });
