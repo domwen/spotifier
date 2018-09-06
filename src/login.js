@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios';
+import axios from './axios';
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -22,7 +22,7 @@ export default class Login extends React.Component {
                 console.log('Data after saving user :', data);
                 if (data.success) {
                     console.log('data.success: ', data);
-                    window.location.replace('./logo');
+                    window.location.replace('./app');
                 } else {
                     this.setState({
                         error: true
