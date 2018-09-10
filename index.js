@@ -6,10 +6,14 @@ const { hashPass, checkPass } = require('./src/hash');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const s3 = require('./s3.js');
+const config = require('./config.json');
+
+// =============== BOILERPLATE STUFF STARTS HERE ===========
+
+//==================== IMAGE UPLOADER BOILERPLATE CODE ===========
 var multer = require('multer');
 var uidSafe = require('uid-safe');
 var path = require('path');
-const config = require('./config.json');
 
 var diskStorage = multer.diskStorage({
     destination: function(req, file, callback) {
@@ -28,6 +32,8 @@ var uploader = multer({
         fileSize: 2097152
     }
 });
+
+//=========== END OF IMAGE UPLOADER BOILERPLATE =============
 
 app.use(compression());
 
@@ -53,7 +59,7 @@ if (process.env.NODE_ENV != 'production') {
 
 app.use(express.static('./public'));
 
-// ^^ BOILERPLATE STUFF ENDS HERE ^^
+// =============== BOILERPLATE STUFF ENDS HERE ===========
 
 app.get('/welcome', function(req, res) {
     console.log('req: ', req);
@@ -66,8 +72,7 @@ app.get('/welcome', function(req, res) {
 
 app.post('/register', (req, res) => {
     let { first, last, email, pass } = req.body;
-    console.log('insider POST register');
-    console.log('req:', req);
+
     hashPass(pass)
         .then(hashedSaltedPw => {
             // console.log('hashedSaltedPw', hashedSaltedPw);
@@ -77,13 +82,9 @@ app.post('/register', (req, res) => {
                 email || null,
                 hashedSaltedPw || null
             ];
-            db.saveUser(params).then(savedUserData => {
-                console.log('savedUserData :', savedUserData);
-                req.session.user = {
-                    firstName: savedUserData.rows[0].first,
-                    lastName: savedUserData.rows[0].last,
-                    userId: savedUserData.rows[0].id
-                };
+            db.saveUser(params).then(userId => {
+                console.log('userId :', userId);
+                req.session.userId = userId;
                 console.log('req.session :', req.session);
                 res.json({ success: true });
             });
@@ -99,31 +100,23 @@ app.post('/register', (req, res) => {
 
 app.post('/login', (req, res) => {
     let { email, pass } = req.body;
-    console.log('insider POST login');
-    console.log('req.body:', req.body);
+
     db.getPassword(email)
-        .then(password => {
-            var userDataObject = password;
-            var storedPw = password.rows[0].password;
+        .then(results => {
+            var storedPw = results.rows[0].password;
+            var userId = results.rows[0].id;
             checkPass(pass, storedPw).then(result => {
                 if (result) {
+                    req.session.userId = userId;
+
                     console.log(
-                        'inside POST login after checkpass :',
-                        userDataObject
+                        'Password match + userID :',
+                        req.session.userId
                     );
-                    req.session = {
-                        user: {
-                            userId: userDataObject.rows[0].id,
-                            firstName: userDataObject.rows[0].first,
-                            lastName: userDataObject.rows[0].last,
-                            url: userDataObject.rows[0].url
-                        }
-                    };
-                    console.log('Password match :', req.session.user);
                     res.json({ success: true });
                 } else {
-                    throw 'error';
                     console.log('Password unmatch');
+                    throw 'error';
                 }
             });
         })
@@ -138,43 +131,81 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/user', (req, res) => {
-    console.log('app GET USER req.session.user', req.session.user);
-    res.json(req.session.user);
+    var id = req.session.userId;
+    console.log('Id is here: ', id);
+
+    db.getUserInfo(id)
+        .then(results => {
+            // console.log("our resutls:", results);
+            res.json(results.rows[0]);
+        })
+        .catch(error => {
+            console.log('Error in getting user info from the table: ', error);
+            res.json({
+                success: false
+            });
+        });
+});
+
+app.get('/get-user/:userId', (req, res) => {
+    if (req.params.userId == req.session.userId) {
+        return res.json({
+            ownProfile: true
+        });
+    }
+    db.otherProfile(req.params.userId)
+        .then(results => {
+            console.log('results: ', results.rows[0]);
+            res.json(results.rows[0]);
+        })
+        .catch(error => {
+            console.log('error in otherProfile', error);
+        });
+});
+
+app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
+    // console.log(
+    //     'config.s3Url + req.file.filename, req.session.userId',
+    //     config.s3Url + req.file.filename,
+    //     req.session.user.userId
+    // );
+
+    console.log(req.session.userId);
+    db.updateImage(config.s3Url + req.file.filename, req.session.userId)
+        .then(data => {
+            console.log('data', data);
+
+            res.json({
+                imageUrl: config.s3Url + req.file.filename
+            });
+        })
+        .catch(() => {
+            res.status(500).json({
+                success: false
+            });
+        });
+});
+
+// ======= SAVE BIO ====
+
+app.post('/profile', (req, res) => {
+    console.log('Bio in /profile', req.body.bio);
+    console.log('userId in /profile', req.session.userId);
+    db.saveBio(req.body.bio, req.session.userId).catch(err => {
+        console.log('Error in POST profile', err);
+        res.status(500).json({
+            success: false
+        });
+    });
 });
 
 /// DO NOT TOUCH THIS LINE OF CODE
 app.get('*', function(req, res) {
-    if (req.session.userId) {
+    if (!req.session.userId) {
         // if  not logged in, redirect to welcome
         return res.redirect('/welcome');
     }
     res.sendFile(__dirname + '/index.html');
-});
-
-app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
-    console.log('Inside app.post /upload');
-    if (req.file) {
-        db.saveFile(
-            // call saveFile module in db.js
-            config.s3Url + req.file.filename,
-            req.body.title,
-            req.body.description,
-            req.body.username
-        )
-            .then(({ rows }) => {
-                console.log('Image succesfully saved in DB', rows);
-                res.json({
-                    success: true,
-                    image: rows[0]
-                });
-            })
-            .catch(err => {
-                console.log('Error in upload catch', err);
-                res.status(500).json({
-                    success: false
-                });
-            });
-    }
 });
 
 app.listen(8080, function() {
