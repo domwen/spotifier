@@ -43,9 +43,17 @@ module.exports.updateImage = (image_url, id) => {
 
 exports.otherProfile = id => {
     const q = `
-    SELECT first, last, id, bio, url 
+    SELECT first, last, id, bio, url
     FROM users
     WHERE id = $1
     `;
     return db.query(q, [id]);
+};
+
+exports.getFriendshipStatus = (ownId, otherId) => {
+    const q = `SELECT sender_id, receiver_id, status FROM friendships WHERE
+    (sender_id = $1 AND receiver_id =$2)
+    OR
+    (sender_id = $2 AND receiver_id = $1)`;
+    return db.query(q[(ownId, otherId)]);
 };

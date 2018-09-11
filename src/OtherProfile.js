@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from './axios';
 import { Link } from 'react-router-dom';
+import FriendButton from './friendButton';
 
 export default class OtherProfile extends Component {
     constructor(props) {
@@ -31,6 +32,7 @@ export default class OtherProfile extends Component {
                 });
             });
     }
+
     render() {
         return (
             <div className="profileContainer">
@@ -48,6 +50,8 @@ export default class OtherProfile extends Component {
                     </h4>
                     <p>{this.state.bio}</p>
                 </div>
+
+                <FriendButton otherId={this.props.match.params.userId} />
             </div>
         );
     }

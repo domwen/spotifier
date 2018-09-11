@@ -4,7 +4,7 @@ import ProfilePic from './profilepic';
 import Uploader from './uploader';
 import { BrowserRouter, Route } from 'react-router-dom';
 import Profile from './profile';
-import OtherProfile from './OtherProfile';
+import OtherProfile from './otherProfile';
 
 export default class App extends React.Component {
     constructor(props) {

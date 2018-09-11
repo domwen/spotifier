@@ -163,6 +163,27 @@ app.get('/get-user/:userId', (req, res) => {
         });
 });
 
+app.get('/friendship-status/:otherId', (req, res) => {
+    let otherId = req.params.otherId;
+    let ownId = req.session.userId;
+
+    console.log('otherId: ', otherId);
+    console.log('ownID: ', ownId);
+
+    db.getFriendshipStatus(ownId, otherId)
+        .then(results => {
+            console.log('Results from getFriendshipStatus: ', results);
+            console.log('res', res);
+            res.json(results);
+        })
+        .catch(error => {
+            console.log('Error in getting user info from the table: ', error);
+            res.json({
+                success: false
+            });
+        });
+});
+
 app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
     // console.log(
     //     'config.s3Url + req.file.filename, req.session.userId',
