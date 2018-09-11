@@ -155,7 +155,7 @@ app.get('/get-user/:userId', (req, res) => {
     }
     db.otherProfile(req.params.userId)
         .then(results => {
-            console.log('results: ', results.rows[0]);
+            // console.log('results: ', results.rows[0]);
             res.json(results.rows[0]);
         })
         .catch(error => {
@@ -163,6 +163,7 @@ app.get('/get-user/:userId', (req, res) => {
         });
 });
 
+//´======== GET FRIENDSHIP STATUS ===========
 app.get('/friendship-status/:otherId', (req, res) => {
     let otherId = req.params.otherId;
     let ownId = req.session.userId;
@@ -173,8 +174,7 @@ app.get('/friendship-status/:otherId', (req, res) => {
     db.getFriendshipStatus(ownId, otherId)
         .then(results => {
             console.log('Results from getFriendshipStatus: ', results);
-            console.log('res', res);
-            res.json(results);
+            res.json(results.rows[0]);
         })
         .catch(error => {
             console.log('Error in getting user info from the table: ', error);
@@ -183,6 +183,28 @@ app.get('/friendship-status/:otherId', (req, res) => {
             });
         });
 });
+
+// ===== MAKE FRIEND REQUEST ========
+
+app.post('/friendRequest', (req, res) => {
+    var friendshipStatus = req.body.friendshipStatus;
+    var sender_id = req.session.userId;
+    var receiver_id = req.body.receiver_id;
+    console.log('/friendRequest receiver_id: ', receiver_id);
+    console.log('/friendRequest status: ', friendshipStatus);
+
+    if (friendshipStatus == 1) {
+        db.newFriendRequest(friendshipStatus, sender_id, receiver_id).then(
+            results => {
+                console.log('Result from newFriendrequest: ', results);
+                res.json(results.rows[0]);
+            }
+        );
+    }
+    res.json('FFUFUFUFU');
+});
+
+//====== PROFILE PIC UPLOAD ====
 
 app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
     // console.log(

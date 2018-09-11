@@ -51,7 +51,7 @@ export default class OtherProfile extends Component {
                     <p>{this.state.bio}</p>
                 </div>
 
-                <FriendButton otherId={this.props.match.params.userId} />
+                <FriendButton receiver_id={this.props.match.params.userId} />
             </div>
         );
     }
