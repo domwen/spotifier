@@ -55,15 +55,14 @@ exports.getFriendshipStatus = (ownId, otherId) => {
     (sender_id = $1 AND receiver_id =$2)
     OR
     (sender_id = $2 AND receiver_id = $1)`;
-    return db.query(q[(ownId, otherId)]);
+    return db.query(q, [ownId, otherId]);
 };
 
 exports.newFriendRequest = (friendshipStatus, sender_id, receiver_id) => {
     const q = `
     INSERT INTO friendships (status, sender_id, receiver_id)
     VALUES ($1, $2, $3)
-    RETURNING status
-}`;
+    RETURNING status`;
     return db.query(q, [friendshipStatus, sender_id, receiver_id]);
 };
 

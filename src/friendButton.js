@@ -11,29 +11,29 @@ export default class FriendButton extends React.Component {
     componentDidMount() {
         axios
             .get(`/friendship-status/${this.props.receiver_id}`)
-            .then(response => {
-                console.log('Response from friendshipstatus: ', response);
+            .then(results => {
+                console.log('Response from friendshipstatus: ', results);
 
-                if (response.data == '') {
+                if (results.data == '') {
                     this.setState({
-                        buttonlabel: 'Make friend  request',
+                        buttonlabel: 'Make A Friend Request',
                         buttonStatus: 0
                     });
-                } else if (response.data.status == 1) {
-                    if ((response.data.receiver_id = this.props.receiver_id)) {
+                } else if (results.data.status == 1) {
+                    if (results.data.sender_id == this.props.receiver_id) {
                         this.setState({
-                            buttonText: 'Friend Request From x',
-                            buttonStatus: 1
+                            buttonlabel: 'Accept Friend Request',
+                            buttonStatus: '1a'
                         });
                     } else {
                         this.setState({
-                            buttonText: 'Request is pending. Cancel?',
-                            buttonStatus: 1
+                            buttonlabel: 'Request is pending. Cancel?',
+                            buttonStatus: '1b'
                         });
                     }
-                } else if (response.data.status == 2) {
+                } else if (results.data.status == 2) {
                     this.setState({
-                        buttonText: 'You are friends :) ',
+                        buttonlabel: "You are friends :) Unfriend? :'(",
                         buttonStatus: 2
                     });
                 }
@@ -57,21 +57,53 @@ export default class FriendButton extends React.Component {
                 })
                 .then(results => {
                     console.log('After First Request', results);
+                    this.setState({
+                        buttonlabel: 'Request is pending. Cancel?',
+                        buttonStatus: '1b'
+                    });
                 });
-        } else if (this.state.buttonStatus == 1) {
-            // do nothing...
-            // console.log("We are here 2");
-            // var status2 = 2;
-            // axios
-            //     .post("/friendRequest", {
-            //         status: status2,
-            //         receiver_id: receiver_id
-            //     })
-            //     .then(results => {
-            //         console.log("After Pending", results);
-            //     });
+        } else if (this.state.buttonStatus == '1a') {
+            // Accept friend request
+            var friendshipstatus = 2;
+            axios
+                .post('/friendRequest', {
+                    friendshipstatus: friendshipstatus,
+                    receiver_id: receiver_id
+                })
+                .then(results => {
+                    console.log('After accepting friend request: ', results);
+                    this.setState({
+                        buttonStatus: 2,
+                        buttonlabel: 'You are friends. Unfriend?'
+                    });
+                });
+        } else if (this.state.buttonStatus == '1b') {
+            // Cancel own pending friend request
+            axios
+                .post('/deleteFriendRequest', {
+                    receiver_id: receiver_id
+                })
+                .then(results => {
+                    console.log('After Deleting', results);
+                    this.setState({
+                        buttonlabel: 'Make A Friend Request',
+                        buttonStatus: 0
+                    });
+                });
         } else if (this.state.buttonStatus == 2) {
-            // unfriend
+            // Ignore other's friend request
+            axios
+                .post('/deleteFriendRequest', {
+                    receiver_id: receiver_id
+                })
+                .then(results => {
+                    console.log('After Deleting', results);
+
+                    this.setState({
+                        buttonlabel: 'Make A Friend Request',
+                        buttonStatus: 0
+                    });
+                });
         }
     }
 

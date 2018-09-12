@@ -22,7 +22,7 @@ export default class Login extends React.Component {
                 console.log('Data after saving user :', data);
                 if (data.success) {
                     console.log('data.success: ', data);
-                    window.location.replace('./app');
+                    window.location.replace('./');
                 } else {
                     this.setState({
                         error: true

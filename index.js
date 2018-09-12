@@ -82,9 +82,9 @@ app.post('/register', (req, res) => {
                 email || null,
                 hashedSaltedPw || null
             ];
-            db.saveUser(params).then(userId => {
-                console.log('userId :', userId);
-                req.session.userId = userId;
+            db.saveUser(params).then(results => {
+                // console.log('userId :', userId);
+                req.session.userId = results.rows[0].id;
                 console.log('req.session :', req.session);
                 res.json({ success: true });
             });
@@ -136,7 +136,7 @@ app.get('/user', (req, res) => {
 
     db.getUserInfo(id)
         .then(results => {
-            // console.log("our resutls:", results);
+            console.log('our resutls:', results);
             res.json(results.rows[0]);
         })
         .catch(error => {
@@ -155,8 +155,14 @@ app.get('/get-user/:userId', (req, res) => {
     }
     db.otherProfile(req.params.userId)
         .then(results => {
-            // console.log('results: ', results.rows[0]);
-            res.json(results.rows[0]);
+            console.log('otherProfile results: ', results.rows[0]);
+            if (results.rows[0] == null) {
+                res.json({
+                    IdExists: false
+                });
+            } else {
+                res.json(results.rows[0]);
+            }
         })
         .catch(error => {
             console.log('error in otherProfile', error);
@@ -194,14 +200,16 @@ app.post('/friendRequest', (req, res) => {
     console.log('/friendRequest status: ', friendshipStatus);
 
     if (friendshipStatus == 1) {
-        db.newFriendRequest(friendshipStatus, sender_id, receiver_id).then(
-            results => {
-                console.log('Result from newFriendrequest: ', results);
+        db.newFriendRequest(friendshipStatus, sender_id, receiver_id)
+            .then(results => {
+                console.log('Result from newFriendRequest: ', results);
                 res.json(results.rows[0]);
-            }
-        );
+            })
+            .catch(error => {
+                console.log('Error in making friend request: ', error);
+                res.json({ success: false });
+            });
     }
-    res.json('FFUFUFUFU');
 });
 
 //====== PROFILE PIC UPLOAD ====

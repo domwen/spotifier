@@ -12,6 +12,7 @@ export default class OtherProfile extends Component {
         axios
             .get(`/get-user/${this.props.match.params.userId}`)
             .then(response => {
+                console.log('Response from get-user: ', response.data);
                 console.log('Is OWN profile?: ', response.data.ownProfile);
                 if (response.data.ownProfile) {
                     this.props.history.push('/');
@@ -21,15 +22,20 @@ export default class OtherProfile extends Component {
                 if (!response.data.url) {
                     response.data.url = '/Portrait_Placeholder.png';
                 }
-                console.log('Response from get-user: ', response.data);
 
-                this.setState({
-                    id: otherUser.id,
-                    first: otherUser.first,
-                    last: otherUser.last,
-                    url: otherUser.url,
-                    bio: otherUser.bio
-                });
+                if (response.data.IdExists == false) {
+                    this.setState({
+                        first: 'USER DOES NOT EXIST'
+                    });
+                } else {
+                    this.setState({
+                        id: otherUser.id,
+                        first: otherUser.first,
+                        last: otherUser.last,
+                        url: otherUser.url,
+                        bio: otherUser.bio
+                    });
+                }
             });
     }
 
@@ -48,6 +54,7 @@ export default class OtherProfile extends Component {
                     <h4>
                         {this.state.first} {this.state.last}
                     </h4>
+                    <p> Bio:</p>
                     <p>{this.state.bio}</p>
                 </div>
 
