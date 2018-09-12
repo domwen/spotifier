@@ -19,7 +19,7 @@ export default function ProfilePic(props) {
 
                 {props.showBio ? ( //== WHAT DOES ? MEAN? ==
                     <textarea
-                        onKeyDown={props.setBio} //=== WHY NO KEY CODE HERE? ==
+                        onKeyDown={props.setBio}
                         defaultValue={props.bio}
                     />
                 ) : (

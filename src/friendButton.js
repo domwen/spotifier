@@ -12,7 +12,7 @@ export default class FriendButton extends React.Component {
         axios
             .get(`/friendship-status/${this.props.receiver_id}`)
             .then(results => {
-                console.log('Response from friendshipstatus: ', results);
+                console.log('Response from friendshipStatus: ', results);
 
                 if (results.data == '') {
                     this.setState({
@@ -49,7 +49,7 @@ export default class FriendButton extends React.Component {
 
         if (this.state.buttonStatus == 0) {
             console.log('We are here');
-            var friendshipStatus = 1;
+            let friendshipStatus = 1;
             axios
                 .post('/friendRequest', {
                     friendshipStatus: friendshipStatus,
@@ -64,10 +64,10 @@ export default class FriendButton extends React.Component {
                 });
         } else if (this.state.buttonStatus == '1a') {
             // Accept friend request
-            var friendshipstatus = 2;
+            let friendshipStatus = 2;
             axios
                 .post('/friendRequest', {
-                    friendshipstatus: friendshipstatus,
+                    friendshipStatus: friendshipStatus,
                     receiver_id: receiver_id
                 })
                 .then(results => {
@@ -98,7 +98,6 @@ export default class FriendButton extends React.Component {
                 })
                 .then(results => {
                     console.log('After Deleting', results);
-
                     this.setState({
                         buttonlabel: 'Make A Friend Request',
                         buttonStatus: 0

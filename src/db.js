@@ -76,3 +76,12 @@ exports.updateFriendRequest = (friendshipStatus, sender_id, receiver_id) => {
     RETURNING status`;
     return db.query(q, [friendshipStatus, sender_id, receiver_id]);
 };
+
+exports.deleteFriendRequest = (receiver_id, sender_id) => {
+    const q = ` 
+    DELETE FROM friendships 
+    WHERE (receiver_id = $1 AND sender_id = $2)
+    OR (receiver_id = $2 AND sender_id = $1)
+    `;
+    return db.query(q, [receiver_id, sender_id]);
+};

@@ -209,7 +209,29 @@ app.post('/friendRequest', (req, res) => {
                 console.log('Error in making friend request: ', error);
                 res.json({ success: false });
             });
+    } else {
+        db.updateFriendRequest(friendshipStatus, receiver_id, sender_id)
+            .then(results => {
+                console.log('Results form sending request', results.rows[0]);
+                res.json(results.rows[0]);
+            })
+            .catch(error => {
+                console.log('Error in making friend request: ', error);
+                res.json({ success: false });
+            });
     }
+});
+
+// ===== DELETE FRIEND REQUEST ========
+
+app.post('/deleteFriendRequest', (req, res) => {
+    console.log('Inside deleteFriendRequest');
+    var sender_id = req.session.userId;
+    console.log('sender_id: ', sender_id);
+    var receiver_id = req.body.receiver_id;
+    db.deleteFriendRequest(receiver_id, sender_id).then(() => {
+        res.json('');
+    });
 });
 
 //====== PROFILE PIC UPLOAD ====
