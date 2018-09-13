@@ -272,6 +272,32 @@ app.post('/profile', (req, res) => {
     });
 });
 
+//´======== GET FRIENDS AND WANNABES ===========
+
+app.get('/listOfFriends', (req, res) => {
+    var userId = req.session.userId;
+    console.log('userID: ', userId);
+    db.receiveFriends(userId)
+        .then(results => {
+            console.log('results from receiveFriends: ', results.rows);
+            res.json(results.rows);
+        })
+        .catch(err => {
+            console.log('Error in listOfFriends :', err);
+            res.status(500).json({
+                success: false
+            });
+        });
+});
+
+//==== LOGOUT =====
+
+app.get('/logout', (req, res) => {
+    // req.session.destroy
+    req.session = null;
+    res.redirect('/welcome#/');
+});
+
 /// DO NOT TOUCH THIS LINE OF CODE
 app.get('*', function(req, res) {
     if (!req.session.userId) {

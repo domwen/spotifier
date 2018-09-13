@@ -2,9 +2,10 @@ import React from 'react';
 import axios from './axios';
 import ProfilePic from './profilepic';
 import Uploader from './uploader';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Link, Router } from 'react-router-dom';
 import Profile from './profile';
 import OtherProfile from './otherProfile';
+import Friends from './friends';
 
 export default class App extends React.Component {
     constructor(props) {
@@ -74,22 +75,28 @@ export default class App extends React.Component {
             );
         }
         return (
-            <div>
-                <div className="main">
-                    <ProfilePic
-                        url={this.state.url}
-                        firstName={this.state.first}
-                        lastName={this.state.last}
-                        clickHandler={this.makeUploaderVisible}
-                    />
-                    {this.state.uploaderIsVisible && (
-                        <Uploader
-                            updateImage={this.updateImage}
-                            submit={this.submit}
+            <BrowserRouter>
+                <div>
+                    <div className="main">
+                        <Link to="/friends" className="cta">
+                            Friends
+                        </Link>
+                        <a href="/logout" className="cta">
+                            Logout
+                        </a>
+                        <ProfilePic
+                            url={this.state.url}
+                            firstName={this.state.first}
+                            lastName={this.state.last}
+                            clickHandler={this.makeUploaderVisible}
                         />
-                    )}
-                </div>
-                <BrowserRouter>
+                        {this.state.uploaderIsVisible && (
+                            <Uploader
+                                updateImage={this.updateImage}
+                                submit={this.submit}
+                            />
+                        )}
+                    </div>
                     <div>
                         {/* === WHY THIS PATH?? === */}
                         <Route
@@ -115,9 +122,10 @@ export default class App extends React.Component {
                             path="/user/:userId"
                             component={OtherProfile}
                         />
+                        <Route exact path="/friends" component={Friends} />
                     </div>
-                </BrowserRouter>
-            </div>
+                </div>
+            </BrowserRouter>
         );
     }
 }

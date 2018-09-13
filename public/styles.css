@@ -89,7 +89,7 @@ main {
     padding-right: 28px;
 }
 
-#imgbox {
+.userBox {
     display: flex;
     flex-direction: column;
     align-items: center;
