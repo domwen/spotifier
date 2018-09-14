@@ -96,3 +96,8 @@ exports.receiveFriends = userId => {
         OR (status = 2 AND sender_id = $1 AND receiver_id = users.id)`;
     return db.query(q, [userId]);
 };
+
+exports.getUsersByIds = arrayOfIds => {
+    const query = `SELECT * FROM users WHERE id = ANY($1)`;
+    return db.query(query, [arrayOfIds]);
+};

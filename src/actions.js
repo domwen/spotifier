@@ -40,3 +40,18 @@ export function unfriend(receiver_id) {
         })
         .catch(e => console.log('catch in unfriend: ', e));
 }
+
+export function onlineUsers(users) {
+    console.log('onlineUsers in Actions running');
+    return {
+        type: 'ONLINE_USERS',
+        users
+    };
+}
+
+export function newUserOnline(user) {
+    return {
+        type: 'NEW_USER_ONLINE',
+        user
+    };
+}

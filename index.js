@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server, { origins: 'localhost:8080' });
 const compression = require('compression');
+
 const db = require('./src/db');
 const { hashPass, checkPass } = require('./src/hash');
 const bodyParser = require('body-parser');
@@ -34,17 +37,20 @@ var uploader = multer({
 });
 
 //=========== END OF IMAGE UPLOADER BOILERPLATE =============
-
 app.use(compression());
 
 app.use(require('body-parser').json());
 
-app.use(
-    cookieSession({
-        secret: `Döner Kebap`,
-        maxAge: 1000 * 60 * 60 * 24 * 14
-    })
-);
+const cookieSessionMiddleware = cookieSession({
+    secret: `Döner Kebap`,
+    maxAge: 1000 * 60 * 60 * 24 * 90
+});
+
+app.use(cookieSessionMiddleware);
+
+io.use(function(socket, next) {
+    cookieSessionMiddleware(socket.request, socket.request.res, next);
+});
 
 if (process.env.NODE_ENV != 'production') {
     app.use(
@@ -62,7 +68,7 @@ app.use(express.static('./public'));
 // =============== BOILERPLATE STUFF ENDS HERE ===========
 
 app.get('/welcome', function(req, res) {
-    console.log('req: ', req);
+    // console.log('req: ', req);
     if (req.session.userId) {
         // if logged in, redirect to root
         return res.redirect('/');
@@ -85,7 +91,7 @@ app.post('/register', (req, res) => {
             db.saveUser(params).then(results => {
                 // console.log('userId :', userId);
                 req.session.userId = results.rows[0].id;
-                console.log('req.session :', req.session);
+                // console.log('req.session :', req.session);
                 res.json({ success: true });
             });
         })
@@ -132,11 +138,11 @@ app.post('/login', (req, res) => {
 
 app.get('/user', (req, res) => {
     var id = req.session.userId;
-    console.log('Id is here: ', id);
+    // console.log('Id is here: ', id);
 
     db.getUserInfo(id)
         .then(results => {
-            console.log('our resutls:', results);
+            // console.log('our resutls:', results);
             res.json(results.rows[0]);
         })
         .catch(error => {
@@ -196,8 +202,8 @@ app.post('/friendRequest', (req, res) => {
     var friendshipStatus = req.body.friendshipStatus;
     var sender_id = req.session.userId;
     var receiver_id = req.body.receiver_id;
-    console.log('/friendRequest receiver_id: ', receiver_id);
-    console.log('/friendRequest status: ', friendshipStatus);
+    // console.log('/friendRequest receiver_id: ', receiver_id);
+    // console.log('/friendRequest status: ', friendshipStatus);
 
     if (friendshipStatus == 1) {
         db.newFriendRequest(friendshipStatus, sender_id, receiver_id)
@@ -262,8 +268,8 @@ app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
 // ======= SAVE BIO ====
 
 app.post('/profile', (req, res) => {
-    console.log('Bio in /profile', req.body.bio);
-    console.log('userId in /profile', req.session.userId);
+    // console.log('Bio in /profile', req.body.bio);
+    // console.log('userId in /profile', req.session.userId);
     db.saveBio(req.body.bio, req.session.userId).catch(err => {
         console.log('Error in POST profile', err);
         res.status(500).json({
@@ -279,7 +285,7 @@ app.get('/listOfFriends', (req, res) => {
     console.log('userID: ', userId);
     db.receiveFriends(userId)
         .then(results => {
-            console.log('results from receiveFriends: ', results.rows);
+            // console.log('results from receiveFriends: ', results.rows);
             res.json(results.rows);
         })
         .catch(err => {
@@ -307,6 +313,44 @@ app.get('*', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-app.listen(8080, function() {
+server.listen(8080, function() {
     console.log("I'm listening.");
+});
+
+let onlineUsers = {};
+
+io.on('connection', function(socket) {
+    console.log(`socket with id ${socket.id} has connected`);
+    if (!socket.request.session || !socket.request.session.userId) {
+        return socket.disconnect(true);
+    }
+
+    let socketId = socket.id;
+    const userId = socket.request.session.userId;
+    console.log(`user with userid ${userId} has connected`);
+
+    // // add socketid: userid to onlineUsers object
+    onlineUsers[socketId] = userId;
+    let arrayOfUserIds = Object.values(onlineUsers);
+    console.log('arrayOfUserIds: ', arrayOfUserIds);
+    db.getUsersByIds(arrayOfUserIds).then(results => {
+        //results is array with all the user info (first, name, url, )
+        // then emit that array to the client and make it put it in Redux
+        console.log('Results after getUsersbyIds: ', results.rows);
+        socket.emit('onlineUsers', results.rows);
+
+        // Emit to everyone BUT the person who just connected
+
+        if (
+            arrayOfUserIds.filter(id => id == socket.request.session.userId)
+                .length == 1
+        ) {
+            console.log('We passed the condition');
+            db.getUserInfo(socket.request.session.userId).then(results => {
+                console.log('New user logged in info: ', results.rows[0]);
+
+                socket.broadcast.emit('newUserOnline', results.rows);
+            });
+        }
+    });
 });

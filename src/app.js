@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Link, Router } from 'react-router-dom';
 import Profile from './profile';
 import OtherProfile from './otherProfile';
 import Friends from './friends';
+import OnlineUsers from './onlineUsers';
 
 export default class App extends React.Component {
     constructor(props) {
@@ -78,12 +79,16 @@ export default class App extends React.Component {
             <BrowserRouter>
                 <div>
                     <div className="main">
+                        <Link to="/onlineUsers" className="cta">
+                            Online Users
+                        </Link>
                         <Link to="/friends" className="cta">
                             Friends
                         </Link>
                         <a href="/logout" className="cta">
                             Logout
                         </a>
+                        <h4>ID: {this.state.id}</h4>
                         <ProfilePic
                             url={this.state.url}
                             firstName={this.state.first}
@@ -123,6 +128,11 @@ export default class App extends React.Component {
                             component={OtherProfile}
                         />
                         <Route exact path="/friends" component={Friends} />
+                        <Route
+                            exact
+                            path="/onlineusers"
+                            component={OnlineUsers}
+                        />
                     </div>
                 </div>
             </BrowserRouter>
