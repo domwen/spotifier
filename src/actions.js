@@ -61,3 +61,19 @@ export function disconnectUser(userId) {
         userId
     };
 }
+
+export function chatMessages(recentMessages) {
+    console.log('cHAT MESSAGES RUNNUNG');
+    return {
+        type: 'CHAT_MESSAGES',
+        recentMessages
+    };
+}
+
+export function newChatMessage(latestMessage) {
+    console.log('NEW_MESSAGE running!', latestMessage);
+    return {
+        type: 'NEW_MESSAGE',
+        latestMessage: latestMessage
+    };
+}

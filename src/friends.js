@@ -24,7 +24,7 @@ class Friends extends React.Component {
         return (
             <div>
                 <h4> FRIENDS </h4>
-                <div id="gridContainer" />;
+                <div id="gridContainer" />
                 {this.props.friends.map(friend => (
                     <div key={friend.id} className="friends">
                         <p>

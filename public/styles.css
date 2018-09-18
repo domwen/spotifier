@@ -79,15 +79,9 @@ h4 {
     display: grid;
     align-items: center;
     justify-content: stretch;
-    margin-top: 25px;
-    margin-bottom: 70px;
     grid-template-columns: 225px 225px 225px 225px;
     grid-column-gap: 50px;
     grid-row-gap: 20px;
-    padding-top: 31px;
-    padding-bottom: 30px;
-    padding-left: 28px;
-    padding-right: 28px;
 }
 
 .userBox {

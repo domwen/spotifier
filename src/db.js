@@ -101,3 +101,22 @@ exports.getUsersByIds = arrayOfIds => {
     const query = `SELECT * FROM users WHERE id = ANY($1)`;
     return db.query(query, [arrayOfIds]);
 };
+
+exports.getRecentMessages = () => {
+    const q = `
+      SELECT users.id, users.first, users.last, users.url, messages.id as chatid, messages.sender_id, messages.message, messages.created_at
+      FROM messages
+      LEFT JOIN users
+      ON users.id = sender_id
+      ORDER BY chatid DESC
+      LIMIT 10
+      `;
+    return db.query(q);
+};
+
+exports.addMessage = (userId, message, url) => {
+    const q = `INSERT INTO messages (sender_id, message, image_url)"
+    VALUES ($1, $2, $3)
+    RETURNING id as chatid, sender_id, created_at, message, image_url`;
+    return db.query(q, [userId, message, url]);
+};

@@ -1,4 +1,6 @@
 import React from 'react';
+import Chat from './chat';
+import { Link } from 'react-router-dom';
 
 export default function ProfilePic(props) {
     return (
@@ -23,9 +25,17 @@ export default function ProfilePic(props) {
                         defaultValue={props.bio}
                     />
                 ) : (
-                    <p onClick={props.toggleBio}>Update your bio.</p>
+                    <button
+                        className="btn"
+                        onKeyDown={props.setBio}
+                        defaultValue={props.bio}
+                        onClick={props.toggleBio}
+                    >
+                        Update your bio
+                    </button>
                 )}
             </div>
+            <Chat />
         </div>
     );
 }

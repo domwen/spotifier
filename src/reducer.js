@@ -66,6 +66,24 @@ export default function Reducer(state = {}, action) {
         };
     }
 
+    //////// CHAT ///////////////
+
+    if (action.type == 'CHAT_MESSAGES') {
+        console.log('Action in chatMessages', action.recentMessages);
+        state = {
+            ...state,
+            recentMessages: action.recentMessages
+        };
+    }
+
+    if (action.type == 'NEW_MESSAGE') {
+        console.log('Action in NEW_MESSAGE', action.latestMessage);
+        state = {
+            ...state,
+            recentMessages: [...state.recentMessages, action.latestMessage]
+        };
+    }
+
     console.log(state);
     return state;
 }

@@ -382,5 +382,36 @@ io.on('connection', function(socket) {
             // in this situation there is no difference between emit and broadcast
             // plurar if io.sockets
         });
+
+        // ==== CHAT CHAT CHAT ===
+        db.getRecentMessages().then(results => {
+            socket.emit('chatMessages', results.rows.reverse);
+        });
+        console.log('getRecentMessages results', results);
+
+        socket.on('chat', message => {
+            let newDetails = [
+                {
+                    id: socket.request.session.user.id,
+                    first: socket.request.session.user.first,
+                    last: socket.request.session.user.last,
+                    url: socket.request.session.user.url
+                }
+            ];
+
+            db.addMessage(
+                userId,
+                message,
+                socket.request.session.user.url
+            ).then(results => {
+                let userDetails = Object.assign(
+                    {},
+                    newDetails[0],
+                    results.rows[0]
+                );
+                console.log('userDetails???: ', userDetails);
+                io.sockets.emit('newChatMessage', userDetails);
+            });
+        });
     });
 });

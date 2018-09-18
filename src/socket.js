@@ -1,5 +1,11 @@
 import * as io from 'socket.io-client';
-import { onlineUsers, newUserOnline, disconnectUser } from './actions';
+import {
+    onlineUsers,
+    newUserOnline,
+    disconnectUser,
+    chatMessages,
+    newChatMessage
+} from './actions';
 
 let socket;
 
@@ -21,8 +27,17 @@ export function getSocket(store) {
 
         socket.on('disconnectUser', data => {
             console.log('We have Disconnected in Socket.js', data);
-
             store.dispatch(disconnectUser(data));
+        });
+
+        //== CHAT ==//
+        socket.on('chatMessages', messages => {
+            console.log('chatMessages in Socket ', messages);
+            store.dispatch(chatMessages(messages));
+        });
+
+        socket.on('newChatMessage', message => {
+            store.dispatch(newChatMessage(message));
         });
     }
     return socket;
