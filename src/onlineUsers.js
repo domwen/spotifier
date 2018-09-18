@@ -8,9 +8,6 @@ class OnlineUsers extends React.Component {
         super();
     }
 
-    componentDidMount() {
-        this.props.dispatch(onlineUsers());
-    }
     render() {
         if (!this.props.onlineUsers) {
             return null;

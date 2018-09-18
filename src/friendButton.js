@@ -52,7 +52,7 @@ export default class FriendButton extends React.Component {
             let friendshipStatus = 1;
             axios
                 .post('/friendRequest', {
-                    friendshipStatus: friendshipStatus,
+                    status: friendshipStatus,
                     receiver_id: receiver_id
                 })
                 .then(results => {
@@ -67,7 +67,7 @@ export default class FriendButton extends React.Component {
             let friendshipStatus = 2;
             axios
                 .post('/friendRequest', {
-                    friendshipStatus: friendshipStatus,
+                    status: friendshipStatus,
                     receiver_id: receiver_id
                 })
                 .then(results => {

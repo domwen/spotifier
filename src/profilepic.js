@@ -4,12 +4,7 @@ export default function ProfilePic(props) {
     console.log('ProfilePic props', props);
     return (
         <div className="profilePicBox">
-            <img
-                src={props.url}
-                alt="ProfilePic"
-                className="profilePic"
-                onClick={props.clickHandler}
-            />
+            <img src={props.url} alt="ProfilePic" className="profilePic" />
         </div>
     );
 }

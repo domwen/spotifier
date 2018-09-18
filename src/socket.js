@@ -19,7 +19,7 @@ export function getSocket(store) {
             store.dispatch(newUserOnline(data));
         });
 
-        socket.on('disonnect', data => {
+        socket.on('disconnectUser', data => {
             console.log('We have Disconnected in Socket.js', data);
 
             store.dispatch(disconnectUser(data));

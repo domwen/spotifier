@@ -55,3 +55,9 @@ export function newUserOnline(user) {
         user
     };
 }
+export function disconnectUser(userId) {
+    return {
+        type: 'USER_DISCONNECTED',
+        userId
+    };
+}

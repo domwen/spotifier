@@ -89,12 +89,14 @@ export default class App extends React.Component {
                             Logout
                         </a>
                         <h4>ID: {this.state.id}</h4>
-                        <ProfilePic
-                            url={this.state.url}
-                            firstName={this.state.first}
-                            lastName={this.state.last}
-                            clickHandler={this.makeUploaderVisible}
-                        />
+                        <Link to="/">
+                            <ProfilePic
+                                url={this.state.url}
+                                firstName={this.state.first}
+                                lastName={this.state.last}
+                                clickHandler={this.makeUploaderVisible}
+                            />
+                        </Link>
                         {this.state.uploaderIsVisible && (
                             <Uploader
                                 updateImage={this.updateImage}
@@ -118,6 +120,7 @@ export default class App extends React.Component {
                                         showBio={this.state.showBio}
                                         toggleBio={this.toggleBio}
                                         setBio={this.setBio}
+                                        clickHandler={this.makeUploaderVisible}
                                     />
                                 </div>
                             )}

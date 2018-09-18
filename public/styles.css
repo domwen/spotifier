@@ -289,6 +289,9 @@ input {
     }
 }
 
+.profilePic {
+    max-width: 200px;
+}
 .profileContainer {
     display: flex;
     flex-direction: row;

@@ -199,11 +199,11 @@ app.get('/friendship-status/:otherId', (req, res) => {
 // ===== MAKE FRIEND REQUEST ========
 
 app.post('/friendRequest', (req, res) => {
-    var friendshipStatus = req.body.friendshipStatus;
+    var friendshipStatus = req.body.status;
     var sender_id = req.session.userId;
     var receiver_id = req.body.receiver_id;
-    // console.log('/friendRequest receiver_id: ', receiver_id);
-    // console.log('/friendRequest status: ', friendshipStatus);
+    console.log('/friendRequest receiver_id: ', receiver_id);
+    console.log('/friendRequest status: ', friendshipStatus);
 
     if (friendshipStatus == 1) {
         db.newFriendRequest(friendshipStatus, sender_id, receiver_id)
@@ -216,9 +216,18 @@ app.post('/friendRequest', (req, res) => {
                 res.json({ success: false });
             });
     } else {
+        console.log(
+            'Before updateFriendRequest: ',
+            friendshipStatus,
+            receiver_id,
+            sender_id
+        );
         db.updateFriendRequest(friendshipStatus, receiver_id, sender_id)
             .then(results => {
-                console.log('Results form sending request', results.rows[0]);
+                console.log(
+                    'Results from updateFriendRequest',
+                    results.rows[0]
+                );
                 res.json(results.rows[0]);
             })
             .catch(error => {
@@ -336,7 +345,7 @@ io.on('connection', function(socket) {
     db.getUsersByIds(arrayOfUserIds).then(results => {
         //results is array with all the user info (first, name, url, )
         // then emit that array to the client and make it put it in Redux
-        console.log('Results after getUsersbyIds: ', results.rows);
+        // console.log('Results after getUsersbyIds: ', results.rows);
         socket.emit('onlineUsers', results.rows);
 
         // Emit to everyone BUT the person who just connected
@@ -352,5 +361,26 @@ io.on('connection', function(socket) {
                 socket.broadcast.emit('newUserOnline', results.rows);
             });
         }
+
+        socket.on('disconnect', function() {
+            delete onlineUsers[socket.id];
+
+            console.log('DISCONNECT: ', onlineUsers);
+            console.log(
+                'CHECK DISCONNECT',
+                Object.values(onlineUsers).includes(userId)
+            );
+
+            if (!Object.values(onlineUsers).includes(userId)) {
+                console.log('Id is not there');
+                console.log(
+                    `socket with the id ${socket.id} is now disconnected`
+                );
+                io.sockets.emit('disconnectUser', userId);
+            }
+
+            // in this situation there is no difference between emit and broadcast
+            // plurar if io.sockets
+        });
     });
 });

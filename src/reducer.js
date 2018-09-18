@@ -55,6 +55,17 @@ export default function Reducer(state = {}, action) {
         };
     }
 
+    if (action.type == 'USER_DISCONNECTED') {
+        console.log('USER_DISCONNECTED in reducer: ', action.userId);
+
+        state = {
+            ...state,
+            onlineUsers: state.onlineUsers.filter(
+                user => user.id != action.userId
+            )
+        };
+    }
+
     console.log(state);
     return state;
 }
