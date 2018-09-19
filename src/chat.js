@@ -33,21 +33,26 @@ class Chat extends Component {
                     {this.props.messages.map(message => (
                         <div key={message.chatid}>
                             <div className="chatBox">
-                                <p className="p2">
-                                    {message.first} {message.last}{' '}
-                                    <p className="p1"> {message.message}</p>
-                                </p>
-                                <img
-                                    className="profilePic"
-                                    src={
-                                        message.url ||
-                                        '../Portrait_Placeholder.png'
-                                    }
-                                />
-
+                                <div>
+                                    <img
+                                        className="chatImg"
+                                        src={
+                                            message.url ||
+                                            '../Portrait_Placeholder.png'
+                                        }
+                                    />
+                                </div>
+                                <div>
+                                    <p className="p2">
+                                        {message.first} {message.last}{' '}
+                                        <p className="p1"> {message.message}</p>
+                                    </p>
+                                </div>
+                                <div>
                                 <p className="p3">
                                     Created at {message.created_at}{' '}
                                 </p>
+                                <div>
                             </div>
 
                             <p className="px">-------------------</p>

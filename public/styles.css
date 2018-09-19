@@ -189,11 +189,19 @@ input {
     border: #fc4f59 solid 1px;
     background-color: #fff;
     width: 60%;
+    overflow: auto;
+}
+
+.chatImg {
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    object-fit: cover;
 }
 
 .chatBox {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
     flex: auto;
@@ -211,7 +219,6 @@ input {
 
 .p3 {
     font-weight: lighter;
-    font-size: 8px;
 }
 
 .form {
