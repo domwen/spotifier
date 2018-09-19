@@ -11,7 +11,7 @@ class Chat extends Component {
     }
     // elem.scrollTop = elem.scrollHeight - elem.clientHeight;
     componentDidUpdate() {
-        // this.elem.scrollTop;
+        this.elem.scrollTop = this.elem.scrollHeight - this.elem.clientHeight;
     }
     saveChatMsg(e) {
         if (e.which === 13) {
@@ -49,13 +49,11 @@ class Chat extends Component {
                                     </p>
                                 </div>
                                 <div>
-                                <p className="p3">
-                                    Created at {message.created_at}{' '}
-                                </p>
-                                <div>
+                                    <p className="p3">
+                                        Created at {message.created_at}{' '}
+                                    </p>
+                                </div>
                             </div>
-
-                            <p className="px">-------------------</p>
                         </div>
                     ))}
                 </div>
