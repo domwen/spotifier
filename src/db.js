@@ -115,7 +115,7 @@ exports.getRecentMessages = () => {
 };
 
 exports.addMessage = (userId, message, url) => {
-    const q = `INSERT INTO messages (sender_id, message, image_url)"
+    const q = `INSERT INTO messages (sender_id, message, image_url)
     VALUES ($1, $2, $3)
     RETURNING id as chatid, sender_id, created_at, message, image_url`;
     return db.query(q, [userId, message, url]);

@@ -109,11 +109,21 @@ app.post('/login', (req, res) => {
 
     db.getPassword(email)
         .then(results => {
+            console.log('Results from  getPassword', results.rows[0]);
+            let user = results.rows[0];
             var storedPw = results.rows[0].password;
             var userId = results.rows[0].id;
             checkPass(pass, storedPw).then(result => {
                 if (result) {
-                    req.session.userId = userId;
+                    req.session = {
+                        userId: userId,
+                        user: {
+                            first: user.first,
+                            last: user.last,
+                            url: user.url,
+                            bio: user.bio
+                        }
+                    };
 
                     console.log(
                         'Password match + userID :',
@@ -384,15 +394,16 @@ io.on('connection', function(socket) {
         });
 
         // ==== CHAT CHAT CHAT ===
+
         db.getRecentMessages().then(results => {
-            socket.emit('chatMessages', results.rows.reverse);
+            socket.emit('chatMessages', results.rows);
         });
         console.log('getRecentMessages results', results);
 
         socket.on('chat', message => {
             let newDetails = [
                 {
-                    id: socket.request.session.user.id,
+                    id: socket.request.session.userId,
                     first: socket.request.session.user.first,
                     last: socket.request.session.user.last,
                     url: socket.request.session.user.url

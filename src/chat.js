@@ -26,33 +26,34 @@ class Chat extends Component {
         console.log('this.propsmessages', this.props.messages);
 
         return (
-            <div className="profile2a">
+            <div className="chatRoomContainer">
                 <h1>Chatroom</h1>
-                <div className="chatRoom" ref={elem => (this.elem = elem)}>
+                <textarea className="chatBox" onKeyDown={this.saveChatMsg} />
+                <div ref={elem => (this.elem = elem)}>
                     {this.props.messages.map(message => (
                         <div key={message.chatid}>
-                            <div className="chatRoom2">
+                            <div className="chatBox">
+                                <p className="p2">
+                                    {message.first} {message.last}{' '}
+                                    <p className="p1"> {message.message}</p>
+                                </p>
                                 <img
-                                    className="chatImg"
-                                    src={message.image_url || '../troll.png'}
+                                    className="profilePic"
+                                    src={
+                                        message.url ||
+                                        '../Portrait_Placeholder.png'
+                                    }
                                 />
-                                <div className="chatRoom4">
-                                    <h5>
-                                        {message.first} {message.last}{' '}
-                                    </h5>
-                                    <p className="p1">
-                                        Created at {message.created_at}{' '}
-                                    </p>
-                                </div>
+
+                                <p className="p3">
+                                    Created at {message.created_at}{' '}
+                                </p>
                             </div>
-                            <div className="chatRoom3">
-                                <p className="p2">{message.message}</p>
-                            </div>
+
                             <p className="px">-------------------</p>
                         </div>
                     ))}
                 </div>
-                <textarea className="txtarea" onKeyDown={this.saveChatMsg} />
             </div>
         );
     }
