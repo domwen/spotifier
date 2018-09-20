@@ -38,7 +38,11 @@ class Chat extends Component {
         return (
             <div className="chatRoomContainer">
                 <h1>Chatroom</h1>
-                <textarea className="chatBox" onKeyDown={this.saveChatMsg} />
+                <textarea
+                    className="chatBox"
+                    placeholder="Enter message here and press Enter (sorry for the shitty UX)"
+                    onKeyDown={this.saveChatMsg}
+                />
                 <div ref={elem => (this.elem = elem)}>
                     {this.props.messages.map(message => (
                         <div key={message.chatid}>
@@ -52,13 +56,15 @@ class Chat extends Component {
                                         }
                                     />
                                 </div>
-                                <div>
-                                    <p className="p2">
-                                        {message.first} {message.last}{' '}
+                                <div className="chatBox-inner">
+                                    <p className="p2"> {message.message}</p>
+                                    <p>
+                                        User:{' '}
+                                        <span className="p1">
+                                            {message.first} {message.last}
+                                        </span>
                                     </p>
-                                    <p className="p1"> {message.message}</p>
-                                </div>
-                                <div>
+
                                     <p className="p3">
                                         Created at {message.created_at}{' '}
                                     </p>

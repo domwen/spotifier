@@ -100,15 +100,17 @@ export default class App extends React.Component {
                         <a href="/logout" className="cta">
                             Logout
                         </a>
-                        <h4>ID: {this.state.id}</h4>
-                        <Link to="/">
-                            <ProfilePic
-                                url={this.state.url}
-                                firstName={this.state.first}
-                                lastName={this.state.last}
-                                clickHandler={this.makeUploaderVisible}
-                            />
-                        </Link>
+                        <div>
+                            <Link to="/">
+                                <ProfilePic
+                                    url={this.state.url}
+                                    firstName={this.state.first}
+                                    lastName={this.state.last}
+                                    clickHandler={this.makeUploaderVisible}
+                                />
+                            </Link>
+                            ID: {this.state.id}
+                        </div>
                         {this.state.uploaderIsVisible && (
                             <Uploader
                                 updateImage={this.updateImage}

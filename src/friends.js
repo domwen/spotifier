@@ -6,6 +6,7 @@ import {
     acceptFriendRequest,
     unfriend
 } from './actions';
+import { Link } from 'react-router-dom';
 
 class Friends extends React.Component {
     constructor() {
@@ -27,13 +28,17 @@ class Friends extends React.Component {
                 <div id="gridContainer" />
                 {this.props.friends.map(friend => (
                     <div key={friend.id} className="userBoxForGrid">
-                        <p>
-                            {friend.first} {friend.last}
-                        </p>
-                        <img
-                            className="img"
-                            src={friend.url || '../Portrait_Placeholder.png'}
-                        />
+                        <Link to={`user/${friend.id}`}>
+                            <p>
+                                {friend.first} {friend.last}
+                            </p>
+                            <img
+                                className="img"
+                                src={
+                                    friend.url || '../Portrait_Placeholder.png'
+                                }
+                            />
+                        </Link>
                         <button
                             className="cta"
                             onClick={() => {
@@ -48,13 +53,17 @@ class Friends extends React.Component {
                 <div id="gridContainer" />{' '}
                 {this.props.wannabes.map(wannabe => (
                     <div key={wannabe.id} className="userBoxForGrid">
-                        <p>
-                            {wannabe.first} {wannabe.last}
-                        </p>
-                        <img
-                            className="img"
-                            src={wannabe.url || '../Portrait_Placeholder.png'}
-                        />
+                        <Link to={`user/${wannabe.id}`}>
+                            <p>
+                                {wannabe.first} {wannabe.last}
+                            </p>
+                            <img
+                                className="img"
+                                src={
+                                    wannabe.url || '../Portrait_Placeholder.png'
+                                }
+                            />
+                        </Link>
                         <button
                             className="cta"
                             onClick={() => {

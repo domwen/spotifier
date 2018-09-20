@@ -69,8 +69,8 @@ h4 {
     margin: 10px;
     width: 100%;
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
+    justify-content: space-between;
+    align-items: baseline;
     flex-direction: row;
 }
 
@@ -199,17 +199,27 @@ input {
 }
 
 .chatBox {
-    display: flex;
+    display: inline-flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
     flex: auto;
-    width: 400px;
-    border: 1px solid #000;
+    min-width: 500px;
+    min-height: 100px;
+    overflow: auto;
+    border-bottom: 1px solid #000;
+}
+
+.chatBox-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
 .p1 {
     font-style: italic;
+    font-weight: lighter;
 }
 
 .p2 {
@@ -217,7 +227,6 @@ input {
 }
 
 .p3 {
-    font-weight: lighter;
     font-size: 10px;
 }
 
