@@ -1,7 +1,7 @@
 import React from 'react';
-import axios from './axios';
 import { connect } from 'react-redux';
-import { onlineUsers } from './actions';
+import { Link } from 'react-router-dom';
+// import { onlineUsers } from './actions';
 
 class OnlineUsers extends React.Component {
     constructor() {
@@ -14,21 +14,25 @@ class OnlineUsers extends React.Component {
         }
         return (
             <div>
-                <h4> ONLINE USERS </h4>
-                <div id="gridContainer" />
-                {this.props.onlineUsers.map(onlineUser => (
-                    <div key={onlineUser.id} className="friends">
-                        <p>
-                            {onlineUser.first} {onlineUser.last}
-                        </p>
-                        <img
-                            className="img"
-                            src={
-                                onlineUser.url || '../Portrait_Placeholder.png'
-                            }
-                        />
-                    </div>
-                ))}
+                <h3> ONLINE USERS </h3>
+                <div id="gridContainer">
+                    {this.props.onlineUsers.map(onlineUser => (
+                        <div key={onlineUser.id} className="userBoxForGrid">
+                            <Link to={`user/${onlineUser.id}`}>
+                                <p>
+                                    {onlineUser.first} {onlineUser.last}
+                                </p>
+                                <img
+                                    className="img"
+                                    src={
+                                        onlineUser.url ||
+                                        '../Portrait_Placeholder.png'
+                                    }
+                                />
+                            </Link>
+                        </div>
+                    ))}
+                </div>
             </div>
         );
     }

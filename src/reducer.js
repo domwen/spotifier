@@ -84,6 +84,14 @@ export default function Reducer(state = {}, action) {
         };
     }
 
+    if (action.type == 'NOTIFICATION') {
+        console.log('NOTIFICATION in reducer', action.notificationObject);
+        state = {
+            ...state,
+            notification: action.notificationObject
+        };
+    }
+
     console.log(state);
     return state;
 }

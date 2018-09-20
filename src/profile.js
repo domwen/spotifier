@@ -1,5 +1,4 @@
 import React from 'react';
-import Chat from './chat';
 import { Link } from 'react-router-dom';
 
 export default function ProfilePic(props) {
@@ -35,7 +34,6 @@ export default function ProfilePic(props) {
                     </button>
                 )}
             </div>
-            <Chat />
         </div>
     );
 }

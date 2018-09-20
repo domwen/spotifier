@@ -4,7 +4,8 @@ import {
     newUserOnline,
     disconnectUser,
     chatMessages,
-    newChatMessage
+    newChatMessage,
+    friendNotification
 } from './actions';
 
 let socket;
@@ -38,6 +39,11 @@ export function getSocket(store) {
 
         socket.on('newChatMessage', message => {
             store.dispatch(newChatMessage(message));
+        });
+
+        socket.on('friendNotification', notificationObject => {
+            console.log('friendNotification in socket'.notificationObject);
+            store.dispatch(friendNotification(notificationObject));
         });
     }
     return socket;

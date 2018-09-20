@@ -9,10 +9,20 @@ class Chat extends Component {
 
         this.saveChatMsg = this.saveChatMsg.bind(this);
     }
-    // elem.scrollTop = elem.scrollHeight - elem.clientHeight;
-    componentDidUpdate() {
+    componentDidMount() {
+        if (!this.elem) {
+            return;
+        }
         this.elem.scrollTop = this.elem.scrollHeight - this.elem.clientHeight;
     }
+
+    componentDidUpdate() {
+        if (!this.elem) {
+            return;
+        }
+        this.elem.scrollTop = this.elem.scrollHeight - this.elem.clientHeight;
+    }
+
     saveChatMsg(e) {
         if (e.which === 13) {
             getSocket().emit('chat', e.target.value);
@@ -45,8 +55,8 @@ class Chat extends Component {
                                 <div>
                                     <p className="p2">
                                         {message.first} {message.last}{' '}
-                                        <p className="p1"> {message.message}</p>
                                     </p>
+                                    <p className="p1"> {message.message}</p>
                                 </div>
                                 <div>
                                     <p className="p3">

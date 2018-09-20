@@ -7,6 +7,9 @@ import Profile from './profile';
 import OtherProfile from './otherProfile';
 import Friends from './friends';
 import OnlineUsers from './onlineUsers';
+import { connect } from 'react-redux';
+import Notify from './notification';
+import Chat from './chat';
 
 export default class App extends React.Component {
     constructor(props) {
@@ -69,7 +72,11 @@ export default class App extends React.Component {
         }
     }
 
+    notification() {} // dispatch the notifaction ( hide notif action that will flip the value string to faulsy val)
+
     render() {
+        console.log('this.props.notification', this.props.notification);
+
         if (!this.state.id) {
             return (
                 <div> Loading... </div> // you can replace it with some funny or useful image/text
@@ -78,8 +85,13 @@ export default class App extends React.Component {
         return (
             <BrowserRouter>
                 <div>
+                    <Notify />
+
                     <div className="main">
-                        <Link to="/onlineUsers" className="cta">
+                        <Link to="/chat" className="cta">
+                            Chat
+                        </Link>
+                        <Link to="/onlineusers" className="cta">
                             Online Users
                         </Link>
                         <Link to="/friends" className="cta">
@@ -130,6 +142,7 @@ export default class App extends React.Component {
                             path="/user/:userId"
                             component={OtherProfile}
                         />
+                        <Route exact path="/chat" component={Chat} />
                         <Route exact path="/friends" component={Friends} />
                         <Route
                             exact

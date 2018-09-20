@@ -109,7 +109,7 @@ app.post('/login', (req, res) => {
 
     db.getPassword(email)
         .then(results => {
-            console.log('Results from  getPassword', results.rows[0]);
+            console.log(' Results from  getPassword', results.rows[0]);
             let user = results.rows[0];
             var storedPw = results.rows[0].password;
             var userId = results.rows[0].id;
@@ -220,6 +220,21 @@ app.post('/friendRequest', (req, res) => {
             .then(results => {
                 console.log('Result from newFriendRequest: ', results);
                 res.json(results.rows[0]);
+                let key;
+                for (key in onlineUsers) {
+                    if (onlineUsers[key] == receiver_id) {
+                        console.log(
+                            'Inside socketReceiverId thingy',
+                            key,
+                            receiver_id
+                        );
+                        io.sockets.sockets[key].emit('friendNotification', {
+                            message: 'You have a friend request from: ',
+                            senderFirst: req.session.user.first,
+                            senderLast: req.session.user.last
+                        });
+                    }
+                }
             })
             .catch(error => {
                 console.log('Error in making friend request: ', error);
@@ -351,6 +366,7 @@ io.on('connection', function(socket) {
     // // add socketid: userid to onlineUsers object
     onlineUsers[socketId] = userId;
     let arrayOfUserIds = Object.values(onlineUsers);
+
     console.log('arrayOfUserIds: ', arrayOfUserIds);
     db.getUsersByIds(arrayOfUserIds).then(results => {
         //results is array with all the user info (first, name, url, )

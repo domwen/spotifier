@@ -23,10 +23,10 @@ class Friends extends React.Component {
         }
         return (
             <div>
-                <h4> FRIENDS </h4>
+                <h3> FRIENDS </h3>
                 <div id="gridContainer" />
                 {this.props.friends.map(friend => (
-                    <div key={friend.id} className="friends">
+                    <div key={friend.id} className="userBoxForGrid">
                         <p>
                             {friend.first} {friend.last}
                         </p>
@@ -44,10 +44,10 @@ class Friends extends React.Component {
                         </button>
                     </div>
                 ))}
-                <h4> FRIEND REQUESTS </h4>
-                <div id="gridContainer" />;
+                <h3> FRIEND REQUESTS </h3>
+                <div id="gridContainer" />{' '}
                 {this.props.wannabes.map(wannabe => (
-                    <div key={wannabe.id} className="wannabes">
+                    <div key={wannabe.id} className="userBoxForGrid">
                         <p>
                             {wannabe.first} {wannabe.last}
                         </p>

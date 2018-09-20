@@ -77,3 +77,11 @@ export function newChatMessage(latestMessage) {
         latestMessage: latestMessage
     };
 }
+
+export function friendNotification(notificationObject) {
+    console.log('NOTIFICATION RUNNING', notificationObject);
+    return {
+        type: 'NOTIFICATION',
+        notificationObject
+    };
+}
