@@ -229,7 +229,7 @@ app.post('/friendRequest', (req, res) => {
                             receiver_id
                         );
                         io.sockets.sockets[key].emit('friendNotification', {
-                            message: 'You have a friend request from: ',
+                            message: 'You have a friend request from ',
                             senderFirst: req.session.user.first,
                             senderLast: req.session.user.last
                         });
@@ -254,6 +254,21 @@ app.post('/friendRequest', (req, res) => {
                     results.rows[0]
                 );
                 res.json(results.rows[0]);
+                let key;
+                for (key in onlineUsers) {
+                    if (onlineUsers[key] == receiver_id) {
+                        console.log(
+                            'Inside socketReceiverId thingy',
+                            key,
+                            receiver_id
+                        );
+                        io.sockets.sockets[key].emit('friendNotification', {
+                            message: 'You are now friends with ',
+                            senderFirst: req.session.user.first,
+                            senderLast: req.session.user.last
+                        });
+                    }
+                }
             })
             .catch(error => {
                 console.log('Error in making friend request: ', error);
@@ -271,6 +286,17 @@ app.post('/deleteFriendRequest', (req, res) => {
     var receiver_id = req.body.receiver_id;
     db.deleteFriendRequest(receiver_id, sender_id).then(() => {
         res.json('');
+        let key;
+        for (key in onlineUsers) {
+            if (onlineUsers[key] == receiver_id) {
+                console.log('Inside socketReceiverId thingy', key, receiver_id);
+                io.sockets.sockets[key].emit('friendNotification', {
+                    message: 'You got unfriended by ',
+                    senderFirst: req.session.user.first,
+                    senderLast: req.session.user.last
+                });
+            }
+        }
     });
 });
 

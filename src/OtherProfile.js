@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from './axios';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import FriendButton from './friendButton';
 
 export default class OtherProfile extends Component {
@@ -56,9 +56,12 @@ export default class OtherProfile extends Component {
                     </h4>
                     <p> Bio:</p>
                     <p>{this.state.bio}</p>
+                    <p>
+                        <FriendButton
+                            receiver_id={this.props.match.params.userId}
+                        />
+                    </p>
                 </div>
-
-                <FriendButton receiver_id={this.props.match.params.userId} />
             </div>
         );
     }

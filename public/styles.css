@@ -72,6 +72,7 @@ h4 {
     justify-content: space-between;
     align-items: baseline;
     flex-direction: row;
+    border-bottom: solid 2px #fc4f59;
 }
 
 #gridContainer {
@@ -316,6 +317,12 @@ input {
 
 .profilePicBox img {
     max-width: 80px;
+    object-fit: cover;
+    overflow: hidden;
+    cursor: pointer;
+    border-color: #fc4f59;
+    -webkit-filter: contrast(3) saturate(4) sepia(0.6) opacity(6);
+    filter: contrast(1.5) saturate(3) sepia(0.6) opacity(6);
 }
 
 .profileInfo {
