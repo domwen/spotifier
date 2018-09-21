@@ -325,19 +325,6 @@ app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
         });
 });
 
-// ======= SAVE BIO ====
-
-app.post('/profile', (req, res) => {
-    // console.log('Bio in /profile', req.body.bio);
-    // console.log('userId in /profile', req.session.userId);
-    db.saveBio(req.body.bio, req.session.userId).catch(err => {
-        console.log('Error in POST profile', err);
-        res.status(500).json({
-            success: false
-        });
-    });
-});
-
 //´======== GET FRIENDS AND WANNABES ===========
 
 app.get('/listOfFriends', (req, res) => {

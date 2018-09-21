@@ -6,7 +6,7 @@ import Login from './login.js';
 export default function Welcome() {
     return (
         <div id="welcome" className="bg-pan-left">
-            <h3 className="roll-in-blurred-left">Welcome to the scl ntwrk!</h3>
+            <h2>Welcome to Spotifier!</h2>
             <HashRouter>
                 <div>
                     <Route exact path="/" component={Registration} />
