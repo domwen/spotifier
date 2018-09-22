@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import {saveTrackQuery, receiveTracks} from "./actions";
+import {saveTrackQuery, receiveTrackQueries} from "./actions";
 
 class Wishlist extends Component {
     constructor() {
@@ -12,6 +12,7 @@ class Wishlist extends Component {
         if (!this.elem) {
             return;
         }
+        this.props.dispatch(receiveTrackQueries());
         this.elem.scrollTop = this.elem.scrollHeight - this.elem.clientHeight;
     }
 
@@ -34,13 +35,10 @@ class Wishlist extends Component {
         // if (!this.props.trackQueries) {
         //     return null;
         // }
-        console.log("this.propsmessages", this.props.trackQueries);
+        // console.log("this.propsmessages", this.props.trackQueries);
 
         return (
             <div>
-                <h4>
-                    {this.props.trackQueries}
-                </h4>
                 <section id="one" className="wrapper style1">
                     <div className="inner">
                         <article className="feature left">
@@ -57,7 +55,7 @@ class Wishlist extends Component {
                                     <li>
                                         <input type="submit" text=""
                                             className="button alt"
-                                            value=""
+                                            value="Save"
                                         />
 
                                     </li>
@@ -66,8 +64,10 @@ class Wishlist extends Component {
                         </article>
                         <article className="feature right">
                             <div className="content">
-
-
+                                <h2>Your saved tracks</h2>
+                                <p>
+                                    {this.props.trackQueries}
+                                </p>
                             </div>
                         </article>
                     </div>
@@ -75,29 +75,13 @@ class Wishlist extends Component {
 
                 {/* ====FORMER CHATROOM IS BELOW === */}
                 {/*<div ref={elem => (this.elem = elem)}>
-                    {this.props.trackQueries.map(message => (
-                        <div key={message.chatid}>
-                            <div className="chatBox">
-                                <div>
-                                    <img
-                                        className="chatImg"
-                                        src={
-                                            message.url ||
-                                            '../Portrait_Placeholder.png'
-                                        }
-                                    />
-                                </div>
+                    {this.props.trackQueries.map(trackQuery => (
+                        <div key={trackQuery.queries.id}>
+                            <div >
                                 <div className="chatBox-inner">
-                                    <p className="p2"> {message.message}</p>
-                                    <p>
-                                        User:{' '}
-                                        <span className="p1">
-                                            {message.first} {message.last}
-                                        </span>
-                                    </p>
-
+                                    <p className="p2"> {trackQuery.query}</p>
                                     <p className="p3">
-                                        Created at {message.created_at}{' '}
+                                        Created at {trackQuery.created_at}{' '}
                                     </p>
                                 </div>
                             </div>
@@ -110,7 +94,7 @@ class Wishlist extends Component {
 }
 
 const mapsStateToProps = state => {
-    console.log("Wishlist mapStateToProps: ", state );
+    console.log("Wishlist mapStateToProps: ", state.trackQueries );
     // state = global redux state
     return {
         trackQueries: state.trackQueries

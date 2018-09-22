@@ -231,16 +231,16 @@ app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
 
 //´======== GET FRIENDS AND WANNABES ===========
 
-app.get('/listOftrackQueries', (req, res) => {
+app.get('/receiveTrackQueries', (req, res) => {
     var userId = req.session.userId;
     console.log('userID: ', userId);
-    db.receiveFriends(userId)
+    db.receiveTrackQueries(userId)
         .then(results => {
-            // console.log('results from receiveFriends: ', results.rows);
+            console.log('results from receiveTrackQueries: ', results.rows);
             res.json(results.rows);
         })
         .catch(err => {
-            console.log('Error in listOfFriends :', err);
+            console.log('Error in receiveTrackQueries :', err);
             res.status(500).json({
                 success: false
             });

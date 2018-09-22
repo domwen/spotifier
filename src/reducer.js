@@ -2,13 +2,13 @@ export default function Reducer(state = {}, action) {
     if (action.type == 'RECEIVE_TRACK_QUERIES') {
         state = {
             ...state,
-            users: action.users
+            trackQueries: action.trackQueries
         };
     }
     if (action.type == 'SAVE_TRACK_QUERY') {
         state = {
             ...state,
-            trackQueries: action.query
+            trackQueries: action.trackQuery
         };
     }
     // if (action.type == 'UNFRIEND') {
@@ -59,6 +59,6 @@ export default function Reducer(state = {}, action) {
         };
     }
 
-    console.log(state);
+    // console.log(state);
     return state;
 }
