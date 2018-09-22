@@ -9,8 +9,8 @@ export async function receiveTrackQueries() {
     };
 }
 
-export function saveTrackQuery(props) {
-    let query = props;
+export function saveTrackQuery(query) {
+    // console.log("Inside ACTION saveTrackQuery: ", query);
     return axios
         .post(`/saveTrackQuery`, {
             query: query

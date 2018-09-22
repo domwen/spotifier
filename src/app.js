@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Link, Router } from 'react-router-dom';
 import Profile from './profile';
 
 import { connect } from 'react-redux';
-import Notify from './notification';
+// import Notify from './notification';
 import Wishlist from './wishlist';
 
 export default class App extends React.Component {
@@ -42,7 +42,7 @@ export default class App extends React.Component {
         });
     }
 
-    notification() {} // dispatch the notifaction ( hide notif action that will flip the value string to faulsy val)
+    // notification() {} // dispatch the notifaction ( hide notif action that will flip the value string to faulsy val)
 
     render() {
         if (!this.state.id) {
@@ -53,7 +53,7 @@ export default class App extends React.Component {
         return (
             <BrowserRouter>
                 <div>
-                    <Notify />
+                    {/* <Notify /> */}
 
                     <div id="header">
                         <h1>Spotifier</h1>

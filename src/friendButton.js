@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from './axios';
-import { getSocket } from './socket';
+// import { getSocket } from './socket';
 
 export default class FriendButton extends React.Component {
     constructor(props) {
@@ -62,7 +62,7 @@ export default class FriendButton extends React.Component {
                         buttonlabel: 'Request is pending. Cancel?',
                         buttonStatus: '1b'
                     });
-                    getSocket().emit('notification', this.state.buttonStatus);
+                    // getSocket().emit('notification', this.state.buttonStatus);
                 });
         } else if (this.state.buttonStatus == '1a') {
             // Accept friend request

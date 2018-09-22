@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const server = require('http').Server(app);
-const io = require('socket.io')(server, { origins: 'localhost:8080' });
+// const io = require('socket.io')(server, { origins: 'localhost:8080' });
 const compression = require('compression');
 
 const db = require('./src/db');
@@ -48,9 +48,9 @@ const cookieSessionMiddleware = cookieSession({
 
 app.use(cookieSessionMiddleware);
 
-io.use(function(socket, next) {
-    cookieSessionMiddleware(socket.request, socket.request.res, next);
-});
+// io.use(function(socket, next) {
+//     cookieSessionMiddleware(socket.request, socket.request.res, next);
+// });
 
 if (process.env.NODE_ENV != 'production') {
     app.use(

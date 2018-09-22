@@ -56,8 +56,7 @@ exports.addTrackQuery = (userId, query) => {
     const q = `
     INSERT INTO queries (user_id, query)
     VALUES ($1, $2)
-    RETURNING query
-    WHERE user_id = $1`;
+    RETURNING query`;
     return db.query(q, [userId, query]);
 };
 

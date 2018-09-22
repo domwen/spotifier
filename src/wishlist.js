@@ -6,7 +6,6 @@ class Wishlist extends Component {
     constructor() {
         super();
         this.state = {};
-
         this.saveTrackQuery = this.saveTrackQuery.bind(this);
     }
     componentDidMount() {
@@ -24,18 +23,24 @@ class Wishlist extends Component {
     }
 
     saveTrackQuery(e) {
-        console.log("SAVED QUERY :", e.target.value);
-        this.props.dispatch(saveTrackQuery(e.target.value));
+        if (e.which === 13) {
+            console.log("SAVED QUERY :", e.target.value);
+            this.props.dispatch(saveTrackQuery(e.target.value));                    e.target.value = '';
+        }
+
     }
 
     render() {
-        if (!this.props.trackQueries) {
-            return null;
-        }
+        // if (!this.props.trackQueries) {
+        //     return null;
+        // }
         console.log("this.propsmessages", this.props.trackQueries);
 
         return (
             <div>
+                <h4>
+                    {this.props.trackQueries}
+                </h4>
                 <section id="one" className="wrapper style1">
                     <div className="inner">
                         <article className="feature left">
@@ -45,15 +50,15 @@ class Wishlist extends Component {
                                     <textarea
                                         className="chatBox"
                                         placeholder="Example: Depeche Mode - Everything Counts (T. Schumacher & V. Ruiz Remix)"
-                                        // onKeyDown={this.saveTrackQuery}
+                                        onKeyDown={this.saveTrackQuery}
                                     />
                                 </p>
                                 <ul className="actions">
                                     <li>
-                                        <input type="submit"
+                                        <input type="submit" text=""
                                             className="button alt"
-                                            value="Save"
-                                            onClick={this.saveTrackQuery} />
+                                            value=""
+                                        />
 
                                     </li>
                                 </ul>
@@ -61,10 +66,8 @@ class Wishlist extends Component {
                         </article>
                         <article className="feature right">
                             <div className="content">
-                                <h2>Your saved tracks</h2>
-                                <p>
-                                    {this.props.trackQueries}
-                                </p>
+
+
                             </div>
                         </article>
                     </div>
@@ -107,6 +110,7 @@ class Wishlist extends Component {
 }
 
 const mapsStateToProps = state => {
+    console.log("Wishlist mapStateToProps: ", state );
     // state = global redux state
     return {
         trackQueries: state.trackQueries

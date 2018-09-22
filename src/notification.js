@@ -39,7 +39,7 @@ export class Notify extends React.Component {
 }
 
 const mapStateToProps = state => {
-    console.log('state. notifaction:::', state);
+    // console.log('Inside mapStateToProps state.notification:', state);
     return {
         notification: state.notification
     };
