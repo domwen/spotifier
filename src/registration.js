@@ -11,6 +11,7 @@ export default class Registration extends React.Component {
     }
     handleChange(e) {
         this[e.target.name] = e.target.value;
+        console.log("e.target.name", e.target.name);
     }
     submit() {
         console.log(

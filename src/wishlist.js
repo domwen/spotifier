@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { getSocket } from './socket';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import {saveTrackQuery, receiveTracks} from "./actions";
 
 class Wishlist extends Component {
     constructor() {
         super();
         this.state = {};
 
-        this.saveChatMsg = this.saveChatMsg.bind(this);
+        this.saveTrackQuery = this.saveTrackQuery.bind(this);
     }
     componentDidMount() {
         if (!this.elem) {
@@ -23,17 +23,16 @@ class Wishlist extends Component {
         this.elem.scrollTop = this.elem.scrollHeight - this.elem.clientHeight;
     }
 
-    saveChatMsg(e) {
-        if (e.which === 13) {
-            getSocket().emit('chat', e.target.value);
-            e.target.value = '';
-        }
+    saveTrackQuery(e) {
+        console.log("SAVED QUERY :", e.target.value);
+        this.props.dispatch(saveTrackQuery(e.target.value));
     }
+
     render() {
-        if (!this.props.messages) {
+        if (!this.props.trackQueries) {
             return null;
         }
-        console.log('this.propsmessages', this.props.messages);
+        console.log("this.propsmessages", this.props.trackQueries);
 
         return (
             <div>
@@ -45,16 +44,17 @@ class Wishlist extends Component {
                                 <p>
                                     <textarea
                                         className="chatBox"
-                                        placeholder="Example: Depeche Mode - Everything Counts (T. Schumacher & V. Ruiz Remix)
-"
-                                        onKeyDown={this.saveChatMsg}
+                                        placeholder="Example: Depeche Mode - Everything Counts (T. Schumacher & V. Ruiz Remix)"
+                                        // onKeyDown={this.saveTrackQuery}
                                     />
                                 </p>
                                 <ul className="actions">
                                     <li>
-                                        <a href="#" className="button alt">
-                                            Save
-                                        </a>
+                                        <input type="submit"
+                                            className="button alt"
+                                            value="Save"
+                                            onClick={this.saveTrackQuery} />
+
                                     </li>
                                 </ul>
                             </div>
@@ -63,11 +63,7 @@ class Wishlist extends Component {
                             <div className="content">
                                 <h2>Your saved tracks</h2>
                                 <p>
-                                    Sed egestas, ante et vulputate volutpat,
-                                    eros pede semper est, vitae luctus metus
-                                    libero eu augue. Morbi purus libero,
-                                    faucibus adipiscing, commodo quis, gravida
-                                    id, est.
+                                    {this.props.trackQueries}
                                 </p>
                             </div>
                         </article>
@@ -76,7 +72,7 @@ class Wishlist extends Component {
 
                 {/* ====FORMER CHATROOM IS BELOW === */}
                 {/*<div ref={elem => (this.elem = elem)}>
-                    {this.props.messages.map(message => (
+                    {this.props.trackQueries.map(message => (
                         <div key={message.chatid}>
                             <div className="chatBox">
                                 <div>
@@ -113,7 +109,7 @@ class Wishlist extends Component {
 const mapsStateToProps = state => {
     // state = global redux state
     return {
-        messages: state.recentMessages
+        trackQueries: state.trackQueries
     };
 };
 

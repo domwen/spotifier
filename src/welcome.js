@@ -5,7 +5,7 @@ import Login from './login.js';
 
 export default function Welcome() {
     return (
-        <div id="welcome" className="bg-pan-left">
+        <div >
             <h2>Welcome to Spotifier!</h2>
             <HashRouter>
                 <div>

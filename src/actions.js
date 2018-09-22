@@ -1,87 +1,60 @@
 import axios from './axios';
-export async function receiveFriendsAndWannabes() {
-    const { data } = await axios.get('/listOfFriends');
+
+export async function receiveTrackQueries() {
+    const { data } = await axios.get('/receiveTrackQueries');
     console.log('DATA in axios from receiveFriendsAndWannabes :', data);
     return {
-        type: 'RECEIVE_FRIENDS_WANNABES',
+        type: 'RECEIVE_TRACK_QUERIES',
         users: data
     };
 }
 
-export function acceptFriendRequest(props) {
-    let receiver_id = props;
-    let status = 2;
+export function saveTrackQuery(props) {
+    let query = props;
     return axios
-        .post(`/friendRequest`, {
-            status: status,
-            receiver_id: receiver_id
+        .post(`/saveTrackQuery`, {
+            query: query
         })
         .then(response => {
+
+            console.log("Response from saveTrackQuery:", response);
             return {
-                type: 'ACCEPT_FRIEND_REQUEST',
-                receiver_id
+                type: 'SAVE_TRACK_QUERY',
+                query: response
             };
         })
-        .catch(e => console.log('catch in acceptFriendRequest: ', e));
+        .catch(e => console.log('catch in saveTrackQuery: ', e));
 }
 
-export function unfriend(receiver_id) {
-    console.log('receiver_id', receiver_id);
-    return axios
-        .post(`/deleteFriendRequest`, {
-            receiver_id: receiver_id
-        })
-        .then(response => {
-            console.log('response in unfriend: ', response);
-            return {
-                type: 'UNFRIEND',
-                receiver_id
-            };
-        })
-        .catch(e => console.log('catch in unfriend: ', e));
-}
+// export function deleteTrack(query) {
+//     console.log('query', query);
+//     return axios
+//         .post(`/deleteFriendRequest`, {
+//             query: query
+//         })
+//         .then(response => {
+//             console.log('response in unfriend: ', response);
+//             return {
+//                 type: 'UNFRIEND',
+//                 query
+//             };
+//         })
+//         .catch(e => console.log('catch in unfriend: ', e));
+// }
 
-export function onlineUsers(users) {
-    console.log('onlineUsers in Actions running');
-    return {
-        type: 'ONLINE_USERS',
-        users
-    };
-}
+// export function resultspage(users) {
+//     console.log('new search results for your query!');
+//     return {
+//         type: 'ONLINE_USERS',
+//         users
+//     };
+// }
 
-export function newUserOnline(user) {
-    return {
-        type: 'NEW_USER_ONLINE',
-        user
-    };
-}
-export function disconnectUser(userId) {
-    return {
-        type: 'USER_DISCONNECTED',
-        userId
-    };
-}
 
-export function chatMessages(recentMessages) {
-    console.log('cHAT MESSAGES RUNNUNG');
-    return {
-        type: 'CHAT_MESSAGES',
-        recentMessages
-    };
-}
-
-export function newChatMessage(latestMessage) {
-    console.log('NEW_MESSAGE running!', latestMessage);
-    return {
-        type: 'NEW_MESSAGE',
-        latestMessage: latestMessage
-    };
-}
-
-export function friendNotification(notificationObject) {
-    console.log('NOTIFICATION RUNNING', notificationObject);
-    return {
-        type: 'NOTIFICATION',
-        notificationObject
-    };
-}
+// export function newResultNotification(notificationObject) {
+//     console.log('NOTIFICATION RUNNING', notificationObject);
+//     return {
+//         type: 'NOTIFICATION',
+//         notificationObject
+//     };
+// }
