@@ -19,12 +19,10 @@ exports.addTrackQuery = (userId, query) => {
 
 exports.receiveTrackQueries = (userId) => {
     const q = `
-      SELECT users.id, queries.id, queries.query
+      SELECT query
       FROM queries
-      LEFT JOIN users
-      ON users.id = user_id
-      WHERE users.id = $1
-      ORDER BY queries.id DESC
+      WHERE user_id = $1
+      ORDER BY id DESC
       `;
     return db.query(q, [userId]);
 };

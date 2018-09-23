@@ -106,7 +106,7 @@ app.post('/register', (req, res) => {
 
 app.post('/login', (req, res) => {
     let { email, pass } = req.body;
-
+    console.log("let { email, pass } = req.body; :", email, pass);
     db.getPassword(email)
         .then(results => {
             console.log(' Results from  getPassword', results.rows[0]);
@@ -193,7 +193,7 @@ app.post('/saveTrackQuery', (req, res) => {
 
 // ===== DELETE TRACK QUERY ========
 
-app.post('/deleteFriendRequest', (req, res) => {
+app.post('/deleteTrackquery', (req, res) => {
     console.log('Inside deleteFriendRequest');
     var sender_id = req.session.userId;
     console.log('sender_id: ', sender_id);
@@ -229,7 +229,7 @@ app.post('/upload', uploader.single('file'), s3.upload, (req, res) => {
         });
 });
 
-//´======== GET FRIENDS AND WANNABES ===========
+//´======== GET TRACK QUERIES ===========
 
 app.get('/receiveTrackQueries', (req, res) => {
     var userId = req.session.userId;

@@ -49,18 +49,24 @@ export default class Registration extends React.Component {
                     className="btn"
                     placeholder="First Name"
                     name="first"
+                    type="text"
+
                 />
                 <input
                     onChange={this.handleChange}
                     className="btn"
                     placeholder="Last Name"
                     name="last"
+                    type="text"
+
                 />
                 <input
                     onChange={this.handleChange}
                     className="btn"
                     placeholder="Email"
                     name="email"
+                    type="email"
+
                 />
                 <input
                     onChange={this.handleChange}
@@ -69,7 +75,7 @@ export default class Registration extends React.Component {
                     placeholder="Password"
                     name="pass"
                 />
-                <button onClick={this.submit} className="cta">
+                <button onClick={this.submit} className="special">
                     Register
                 </button>
                 <div id="loginBox">

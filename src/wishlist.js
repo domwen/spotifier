@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import {saveTrackQuery, receiveTrackQueries} from "./actions";
+import axios from './axios';
+
 
 class Wishlist extends Component {
     constructor() {
@@ -9,11 +11,16 @@ class Wishlist extends Component {
         this.saveTrackQuery = this.saveTrackQuery.bind(this);
     }
     componentDidMount() {
-        if (!this.elem) {
-            return;
-        }
-        this.props.dispatch(receiveTrackQueries());
-        this.elem.scrollTop = this.elem.scrollHeight - this.elem.clientHeight;
+        // console.log("this.elem ", this.elem);
+        // if (!this.elem) {
+        //     return;
+        // }
+        axios.get(receiveTrackQueries).then(trackQueries => {
+            console.log("After Axios get > trackQueries ", trackQueries);
+            this.props.dispatch(receiveTrackQueries(trackQueries));
+
+        });
+        // this.elem.scrollTop = this.elem.scrollHeight - this.elem.clientHeight;
     }
 
     componentDidUpdate() {
@@ -66,8 +73,14 @@ class Wishlist extends Component {
                             <div className="content">
                                 <h2>Your saved tracks</h2>
                                 <p>
-                                    {this.props.trackQueries}
+                                    {/*{this.props.trackQueries}*/}
                                 </p>
+
+                                <input type="submit" text=""
+                                    className="button alt"
+                                    value="Send request"
+                                    onClick={this.sendQueries}
+                                />
                             </div>
                         </article>
                     </div>

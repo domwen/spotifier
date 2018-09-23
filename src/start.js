@@ -10,21 +10,23 @@ import { Provider } from 'react-redux';
 
 // socket stuff ======
 
-import { getSocket } from './socket';
 const store = createStore(
     Reducer,
     composeWithDevTools(applyMiddleware(reduxPromise))
 );
+
 let elem;
 if (location.pathname == '/welcome') {
     elem = <Welcome />;
+    console.log("Elem in start.js IF", elem);
 } else {
-    elem = (getSocket(store),
-    (
+    elem = (
         <Provider store={store}>
             <App />
         </Provider>
-    ));
+    );
+    console.log("Elem in start.js ELSE", elem);
 }
+
 
 ReactDOM.render(elem, document.querySelector('main'));
