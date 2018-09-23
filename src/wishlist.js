@@ -15,7 +15,7 @@ class Wishlist extends Component {
         // if (!this.elem) {
         //     return;
         // }
-        axios.get(receiveTrackQueries).then(trackQueries => {
+        axios.get("/receiveTrackQueries").then(trackQueries => {
             console.log("After Axios get > trackQueries ", trackQueries);
             this.props.dispatch(receiveTrackQueries(trackQueries));
 
@@ -36,6 +36,12 @@ class Wishlist extends Component {
             this.props.dispatch(saveTrackQuery(e.target.value));                    e.target.value = '';
         }
 
+    }
+
+    sendQueries() {
+        axios.post("/sendQueries").then(results => {
+            console.log("results from sendQueries", results);
+        });
     }
 
     render() {

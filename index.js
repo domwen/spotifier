@@ -247,6 +247,25 @@ app.get('/receiveTrackQueries', (req, res) => {
         });
 });
 
+//========  SEND QUERIES TO SAPI  =====
+
+app.post("/sendQueries", (req, res) => {
+    console.log("sendQueries in index.js runnimg");
+    var userId = req.session.userId;
+    console.log('userID: ', userId);
+    db.receiveTrackQueries(userId)
+        .then(results => {
+            console.log('results from receiveTrackQueries: ', results.rows);
+            res.json(results.rows);
+        })
+        .catch(err => {
+            console.log('Error in receiveTrackQueries :', err);
+            res.status(500).json({
+                success: false
+            });
+        });
+});
+
 //==== LOGOUT =====
 
 app.get('/logout', (req, res) => {
