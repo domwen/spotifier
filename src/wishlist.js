@@ -39,7 +39,7 @@ class Wishlist extends Component {
     }
 
     sendQueries() {
-        axios.post("/sendQueries").then(results => {
+        axios.get("/sendQueries").then(results => {
             console.log("results from sendQueries", results);
         });
     }
