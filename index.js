@@ -10,9 +10,8 @@ const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const s3 = require('./s3.js');
 const config = require('./config.json');
-const { spotify_ID, spotify_secret } = require('./secrets.json');
 const querystring = require('querystring');
-const https = require('https');
+const modules = require("./modules.js");
 
 
 
@@ -253,108 +252,67 @@ app.get('/receiveTrackQueries', (req, res) => {
 });
 
 //========  SEND QUERIES TO SAPI  =====
-var body = "";    // Promise all
 app.get("/sendQueries", (req, res) => {
     var queries = [];
-    var firstQuery = [];
     var userId = req.session.userId;
     console.log('userID: ', userId);
     db.receiveTrackQueries(userId)
         .then(results => {
-            firstQuery = querystring.stringify(results.rows[3]);
-            // firstQuery = querystring.stringify(results.rows[2]);
-            queries = results.rows;
+            for (let i = 0; i < results.rows.length; i++) {
+                queries.push(querystring.stringify(results.rows[i]));
+            }
+
             console.log('results from receiveTrackQueries: ', queries);
+
+            modules.getToken().then(function(token) {
+                // console.log("TOKEN", token);
+                var arrayOfQueries = [];
+                for (let i = 0; i < queries.length; i++) {
+                    arrayOfQueries.push(modules.getResults(token, queries[i]));
+
+                }
+                console.log("arrayOfQueries ", arrayOfQueries);
+                return Promise.all (arrayOfQueries).then(resp => {
+                    console.log("Resp from Promise all arrayOfQueries:  ", resp);
+                        let trackInf0 =[];
+                    for (let i=0; i < resp.length; i++){
+                        console.log("resp[i].tracks.items", resp[i].tracks.items);
+                        tracksInfo.push({
+                            name: resp[i].tracks.items.name,
+                            
+                        })
+                    }
+                })
+
+                    .catch(err => {
+                    console.log('Error in receiveTrackQueries :', err);
+                    res.status(500).json({
+                        success: false
+                    });
+                });
+
+            })
+
+                .catch(err => {
+                    console.log('Error in receiveTrackQueries :', err);
+                    res.status(500).json({
+                        success: false
+                    });
+                });
+
         })
-        .catch(err => {
+            .catch(err => {
             console.log('Error in receiveTrackQueries :', err);
             res.status(500).json({
                 success: false
             });
         });
 
-    getToken().then(function(token) {
-        // console.log("TOKEN", token);
-            getResults(token, firstQuery)
-            .then(resultsObject => {
-            console.log("IGNORE ME", resultsObject);
-            // console.log("Results from getResults: ", body);
-        });
 
-    });
+
 });
 
-function getResults(token, query) {
 
-    console.log("stringifiedQuery", query);
-    return new Promise((resolve, reject) => {
-        var options = {
-            method: 'GET',
-            host: 'api.spotify.com',
-            path: '/v1/search?' + query + '&type=track&limit=2',
-            headers: {
-                Authorization: 'Bearer ' + token
-            }
-        };
-
-        let callback = function(response){
-            console.log("Response from SAPI:", response.statusCode);
-
-
-            response.on("data", function(chunk) {
-                body += chunk;
-            });
-            if (response.statusCode != 200) {
-                reject(new Error(response.statusCode));
-                return;
-            }
-            response.on("end", function() {
-                // let bearerToken = JSON.parse(str).access_token;
-                console.log("Full response from SAPI", body);
-                resolve(JSON.parse(body));
-            });
-
-        };
-        var req = https.request(options, callback);
-        req.write('grant_type=client_credentials');
-        req.end();
-
-    });
-}
-
-
-
-
-
-function getToken() {
-    let concatenatedStr = spotify_ID + ':' + spotify_secret;
-    let base64Encoded = new Buffer(concatenatedStr).toString('base64');
-    return new Promise(function(resolve, reject) {
-        const req = https.request({
-            method: 'POST',
-            host: 'accounts.spotify.com',
-            path: '/api/token',
-            headers: {
-                Authorization: 'Basic  '+ base64Encoded,
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        }, function(resp) {
-            if (resp.statusCode != 200) {
-                return reject(resp.statusCode);
-            }
-            let body = '';
-            resp.on('data', function(data) {
-                body += data;
-            }).on('end', function() {
-                resolve(JSON.parse(body).access_token);
-            }).on('error', function(err) {
-                return reject(err);
-            });
-        });
-        req.write('grant_type=client_credentials');
-        req.end();
-    });
-}
 
 //     var userId = req.session.userId;
 //     console.log('userID: ', userId);
