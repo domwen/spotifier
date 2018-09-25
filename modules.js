@@ -8,7 +8,7 @@ module.exports.getResults = function getResults(token, query) {
         var options = {
             method: 'GET',
             host: 'api.spotify.com',
-            path: '/v1/search?' + query + '&type=track&limit=2',
+            path: '/v1/search?' + query + '&type=track&limit=5&market=DE',
             headers: {
                 Authorization: 'Bearer ' + token
             }
@@ -37,7 +37,7 @@ module.exports.getResults = function getResults(token, query) {
         req.end();
 
     });
-}
+};
 
 
 

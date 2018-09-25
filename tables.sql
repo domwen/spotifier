@@ -20,10 +20,17 @@ CREATE TABLE  queries(
 );
 
 
+
 CREATE TABLE results (
     id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id),
     query_id INTEGER NOT NULL REFERENCES queries(id),
-    result VARCHAR(500),
+    artist_name VARCHAR(200),
+    track_title VARCHAR(200),
+    external_url VARCHAR(200),
+    spotify_id VARCHAR(200),
+    album_image_url VARCHAR(200),
+    match_status INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
