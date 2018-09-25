@@ -263,9 +263,11 @@ app.get("/sendQueries", (req, res) => {
             for (let i = 0; i < results.rows.length; i++) {
                 var queryObj = {};
                 queryObj.queryId = results.rows[i].id;
+                queryObj.userId = results.rows[i].user_id;
                 queryObj.queryString = querystring.stringify({query: results.rows[i].query});
                 queries.push(queryObj);
                 console.log('results from queryObj.queryString: ', results.rows[i].query);
+
             }
 
 
@@ -284,7 +286,8 @@ app.get("/sendQueries", (req, res) => {
 
                         console.log("\n\n***** BEFORE FILTERING OBJECT\n");
 
-                        console.log("\n***** QueryId: " + resp[i].queryId + "\n");
+                        var queryId = resp[i].queryId;
+                        var userIdFromResp = resp[i].userId;
 
                         var items = resp[i].tracks.items;
                         var filteredResults = [];
@@ -325,6 +328,10 @@ app.get("/sendQueries", (req, res) => {
 
                             filteredResults.push(resultObj);
                             console.log("filteredResults ", filteredResults);
+
+                            db.saveFilteredResultsInDb(resultObj.trackId, resultObj.trackTitle, resultObj.imageUrl, resultObj.artistNames, resultObj.externalUrl, queryId, userIdFromResp).then(resp =>{
+                                console.log("ALL IS GOOD", resp);
+                            });
                         }
                     }
 

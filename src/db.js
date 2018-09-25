@@ -19,7 +19,7 @@ exports.addTrackQuery = (userId, query) => {
 
 exports.receiveTrackQueries = (userId) => {
     const q = `
-      SELECT query, id
+      SELECT query, id, user_id
       FROM queries
       WHERE user_id = $1
       ORDER BY id DESC
@@ -27,18 +27,21 @@ exports.receiveTrackQueries = (userId) => {
     return db.query(q, [userId]);
 };
 
-exports.updateFriendRequest = (friendshipStatus, sender_id, receiver_id) => {
+
+
+
+
+module.exports.saveFilteredResultsInDb = (trackId, trackTitle, imageUrl, artistNames, externalUrl, queryId, userIdFromResp) => {
     const q = `
-    UPDATE friendships
-    SET status = $1
-    WHERE (sender_id = $2 AND receiver_id = $3)
-    OR
-    (sender_id = $3 AND receiver_id = $2)
-    RETURNING status`;
-    return db.query(q, [friendshipStatus, sender_id, receiver_id]);
+    INSERT INTO results (spotify_id, track_title, album_image_url, artist_name, external_url, query_id, user_id) SELECT CAST($1 AS VARCHAR), CAST($2 AS VARCHAR), CAST($3 AS VARCHAR), CAST($4 AS VARCHAR), CAST($5 AS VARCHAR), $6, $7
+    WHERE NOT EXISTS (SELECT * FROM results WHERE spotify_id = '$1' AND user_id = $7 AND query_id = $6)
+    `;
+    return db.query(q, [trackId, trackTitle, imageUrl, artistNames, externalUrl, queryId, userIdFromResp]);
 };
 
 
+
+// WHERE (spotify_id != $1 AND user_id != $7 AND query_id != $6)
 
 module.exports.saveUser = params => {
     const q =

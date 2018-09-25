@@ -30,9 +30,8 @@ module.exports.getResults = function getResults(token, queryObj) {
                 // console.log("Full response from SAPI", body);
 
                 var jsonObj = JSON.parse(body);
-
                 jsonObj.queryId = queryObj.queryId;
-
+                jsonObj.userId = queryObj.userId;
                 resolve(jsonObj);
             });
 
