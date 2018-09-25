@@ -258,18 +258,23 @@ app.get("/sendQueries", (req, res) => {
     console.log('userID: ', userId);
     db.receiveTrackQueries(userId)
         .then(results => {
+            console.log("results from receiveTrackQueries", results);
+
             for (let i = 0; i < results.rows.length; i++) {
-                queries.push(querystring.stringify(results.rows[i]));
+                var queryObj = {};
+                queryObj.queryId = results.rows[i].id;
+                queryObj.queryString = querystring.stringify({query: results.rows[i].query});
+                queries.push(queryObj);
+                console.log('results from queryObj.queryString: ', results.rows[i].query);
             }
 
-            console.log('results from receiveTrackQueries: ', queries);
+
 
             modules.getToken().then(function(token) {
                 // console.log("TOKEN", token);
                 var arrayOfQueries = [];
                 for (let i = 0; i < queries.length; i++) {
                     arrayOfQueries.push(modules.getResults(token, queries[i]));
-
                 }
                 console.log("arrayOfQueries ", arrayOfQueries);
                 return Promise.all (arrayOfQueries).then(resp => {
@@ -279,9 +284,10 @@ app.get("/sendQueries", (req, res) => {
 
                         console.log("\n\n***** BEFORE FILTERING OBJECT\n");
 
+                        console.log("\n***** QueryId: " + resp[i].queryId + "\n");
+
                         var items = resp[i].tracks.items;
                         var filteredResults = [];
-
 
                         for(let i = 0; i < items.length; i++)
                         {

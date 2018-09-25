@@ -1,14 +1,14 @@
 const { spotify_ID, spotify_secret } = require('./secrets.json');
 const https = require('https');
 
-module.exports.getResults = function getResults(token, query) {
+module.exports.getResults = function getResults(token, queryObj) {
 
-    console.log("stringifiedQuery", query);
+    console.log("stringifiedQuery", queryObj);
     return new Promise((resolve, reject) => {
         var options = {
             method: 'GET',
             host: 'api.spotify.com',
-            path: '/v1/search?' + query + '&type=track&limit=5&market=DE',
+            path: '/v1/search?' + queryObj.queryString + '&type=track&limit=5&market=DE',
             headers: {
                 Authorization: 'Bearer ' + token
             }
@@ -28,7 +28,12 @@ module.exports.getResults = function getResults(token, query) {
             response.on("end", function() {
                 // let bearerToken = JSON.parse(str).access_token;
                 // console.log("Full response from SAPI", body);
-                resolve(JSON.parse(body));
+
+                var jsonObj = JSON.parse(body);
+
+                jsonObj.queryId = queryObj.queryId;
+
+                resolve(jsonObj);
             });
 
         };

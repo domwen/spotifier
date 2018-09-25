@@ -19,7 +19,7 @@ exports.addTrackQuery = (userId, query) => {
 
 exports.receiveTrackQueries = (userId) => {
     const q = `
-      SELECT query
+      SELECT query, id
       FROM queries
       WHERE user_id = $1
       ORDER BY id DESC
