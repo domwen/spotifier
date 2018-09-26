@@ -95,21 +95,7 @@ class Wishlist extends Component {
                     </div>
                 </section>
 
-                {/* ====FORMER CHATROOM IS BELOW === */}
-                {/*<div ref={elem => (this.elem = elem)}>
-                    {this.props.trackQueries.map(trackQuery => (
-                        <div key={trackQuery.queries.id}>
-                            <div >
-                                <div className="chatBox-inner">
-                                    <p className="p2"> {trackQuery.query}</p>
-                                    <p className="p3">
-                                        Created at {trackQuery.created_at}{' '}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>*/}
+            
             </div>
         );
     }

@@ -28,19 +28,29 @@ exports.receiveTrackQueries = (userId) => {
 };
 
 
+exports.receiveAllTrackQueries = () => {
+    const q = `
+      SELECT query, id, user_id
+      FROM queries
+      ORDER BY id DESC
+      `;
+    return db.query(q);
+};
+
+
 
 
 
 module.exports.saveFilteredResultsInDb = (trackId, trackTitle, imageUrl, artistNames, externalUrl, queryId, userIdFromResp) => {
     const q = `
-    INSERT INTO results (spotify_id, track_title, album_image_url, artist_name, external_url, query_id, user_id) SELECT CAST($1 AS VARCHAR), CAST($2 AS VARCHAR), CAST($3 AS VARCHAR), CAST($4 AS VARCHAR), CAST($5 AS VARCHAR), $6, $7
-    WHERE NOT EXISTS (SELECT * FROM results WHERE spotify_id = '$1' AND user_id = $7 AND query_id = $6)
+    INSERT INTO results (spotify_id, track_title, album_image_url, artist_name, external_url, query_id, user_id)
+    VALUES ($1, $2, $3, $4, $5, $6, $7) ON
+    CONFLICT DO NOTHING
     `;
 
 
     return db.query(q, [trackId, trackTitle, imageUrl, artistNames, externalUrl, queryId, userIdFromResp]);
 };
-
 
 
 // WHERE (spotify_id != $1 AND user_id != $7 AND query_id != $6)

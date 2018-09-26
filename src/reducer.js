@@ -8,7 +8,7 @@ export default function Reducer(state = {}, action) {
     if (action.type == 'SAVE_TRACK_QUERY') {
         state = {
             ...state,
-            trackQueries: state.trackQueries.concat(action.trackQuery)
+            trackQueries: state.trackQueries.concat(action.trackQuery).reverse()
         };
         console.log("REDUCER trackQueries: ", state.trackQueries);
     }

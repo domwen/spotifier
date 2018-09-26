@@ -19,10 +19,10 @@ CREATE TABLE  queries(
     notification_id INTEGER REFERENCES notifications(id)
 );
 
-
+DROP TABLE IF EXISTS results;
 
 CREATE TABLE results (
-    id SERIAL PRIMARY KEY,
+    id SERIAL,
     user_id INTEGER NOT NULL REFERENCES users(id),
     query_id INTEGER NOT NULL REFERENCES queries(id),
     artist_name VARCHAR(200),
@@ -31,7 +31,8 @@ CREATE TABLE results (
     spotify_id VARCHAR(200),
     album_image_url VARCHAR(200),
     match_status INTEGER,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (spotify_id, user_id, query_id)
 );
 
 

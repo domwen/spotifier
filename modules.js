@@ -75,4 +75,4 @@ module.exports.getToken = function getToken() {
         req.write('grant_type=client_credentials');
         req.end();
     });
-}
+};
