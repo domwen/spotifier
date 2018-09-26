@@ -8,8 +8,9 @@ export default function Reducer(state = {}, action) {
     if (action.type == 'SAVE_TRACK_QUERY') {
         state = {
             ...state,
-            trackQueries: action.trackQuery
+            trackQueries: state.trackQueries.concat(action.trackQuery)
         };
+        console.log("REDUCER trackQueries: ", state.trackQueries);
     }
     // if (action.type == 'UNFRIEND') {
     //     console.log('Action in UNFRIEND!: ', action);

@@ -12,7 +12,7 @@ exports.addTrackQuery = (userId, query) => {
     const q = `
     INSERT INTO queries (user_id, query)
     VALUES ($1, $2)
-    RETURNING query`;
+    RETURNING query, user_id, id`;
     return db.query(q, [userId, query]);
 };
 
@@ -36,6 +36,8 @@ module.exports.saveFilteredResultsInDb = (trackId, trackTitle, imageUrl, artistN
     INSERT INTO results (spotify_id, track_title, album_image_url, artist_name, external_url, query_id, user_id) SELECT CAST($1 AS VARCHAR), CAST($2 AS VARCHAR), CAST($3 AS VARCHAR), CAST($4 AS VARCHAR), CAST($5 AS VARCHAR), $6, $7
     WHERE NOT EXISTS (SELECT * FROM results WHERE spotify_id = '$1' AND user_id = $7 AND query_id = $6)
     `;
+
+
     return db.query(q, [trackId, trackTitle, imageUrl, artistNames, externalUrl, queryId, userIdFromResp]);
 };
 

@@ -182,7 +182,7 @@ app.post('/saveTrackQuery', (req, res) => {
 
     db.addTrackQuery(userId, query)
         .then(results => {
-            console.log('Result from addTrackQuery: ', results);
+            console.log('Result from addTrackQuery: ', results.rows[0]);
             res.json(results.rows[0]);
 
         })

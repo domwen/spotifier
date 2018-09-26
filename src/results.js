@@ -4,7 +4,7 @@ import {saveTrackQuery, receiveTrackQueries} from "./actions";
 import axios from './axios';
 
 
-class Wishlist extends Component {
+class Results extends Component {
     constructor() {
         super();
         this.state = {};
@@ -45,10 +45,10 @@ class Wishlist extends Component {
     }
 
     render() {
-        if (!this.props.trackQueries) {
-            return null;
-        }
-        console.log("this.propsmessages", this.props.trackQueries);
+        // if (!this.props.trackQueries) {
+        //     return null;
+        // }
+        // console.log("this.propsmessages", this.props.trackQueries);
 
         return (
             <div>
@@ -78,12 +78,9 @@ class Wishlist extends Component {
                         <article className="feature right">
                             <div className="content">
                                 <h2>Your saved tracks</h2>
-
-                                {this.props.trackQueries.map(trackQuery => (
-                                    <div key={trackQuery.id}>
-                                        <p>{trackQuery.query}</p>
-                                    </div>
-                                ))}
+                                <p>
+                                    {/*{this.props.trackQueries}*/}
+                                </p>
 
                                 <input type="submit" text=""
                                     className="button alt"
@@ -125,4 +122,4 @@ const mapsStateToProps = state => {
 
 // check length, if greater than then, then slice();
 
-export default connect(mapsStateToProps)(Wishlist);
+export default connect(mapsStateToProps)(Results);

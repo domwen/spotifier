@@ -7,6 +7,8 @@ import Profile from './profile';
 import { connect } from 'react-redux';
 // import Notify from './notification';
 import Wishlist from './wishlist';
+import Results from './results';
+
 
 export default class App extends React.Component {
     constructor(props) {

@@ -18,10 +18,10 @@ export function saveTrackQuery(query) {
         })
         .then(response => {
 
-            console.log("Response from saveTrackQuery:", response.data.query);
+            console.log(" ACTIONS.js: Response from saveTrackQuery:", response.data.query);
             return {
                 type: 'SAVE_TRACK_QUERY',
-                trackQuery: response.data.query
+                trackQuery: response.data
             };
         })
         .catch(e => console.log('catch in saveTrackQuery: ', e));
