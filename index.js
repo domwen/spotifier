@@ -13,6 +13,8 @@ const config = require('./config.json');
 const querystring = require('querystring');
 const modules = require("./modules.js");
 const cron = require("node-cron");
+const nodemailer = require("nodemailer");
+const {gmail_user, gmail_pass} = require("./secrets.json");
 
 
 
@@ -263,9 +265,22 @@ app.get("/sendQueries", (req, res) => {
     db.receiveTrackQueries(userId)
         .then(results => {
             console.log("results from receiveTrackQueries", results);
-            getResultsFromAPI(results);
+            prepareQueriesForAPI(results)
+
+                .then(resultsFromAPI => {
+                    console.log("resultsFromAPI", resultsFromAPI);
+                    res.json(resultsFromAPI);
+                })
+
+                .catch(err => {
+                    console.log('Error in resultsFromAPI :', err);
+                    res.status(500).json({
+                        success: false
+                    });
+                });
 
         })
+
         .catch(err => {
             console.log('Error in receiveTrackQueries :', err);
             res.status(500).json({
@@ -273,11 +288,11 @@ app.get("/sendQueries", (req, res) => {
             });
         });
 
-
-
 });
 
-function getResultsFromAPI(results){
+
+
+function prepareQueriesForAPI(results){
     var queries = [];
 
     for (let i = 0; i < results.rows.length; i++) {
@@ -339,6 +354,10 @@ function getResultsFromAPI(results){
                             resultObj.artistNames += items[i].album.artists[j].name + ", ";
                         }
                     }
+                    if(resultObj.artistNames.lastIndexOf(",") != -1)
+                    {
+                        resultObj.artistNames = resultObj.artistNames.substr(0, resultObj.artistNames.lastIndexOf(","));
+                    }
 
                     // get external Url
                     resultObj.externalUrl = "";
@@ -355,9 +374,12 @@ function getResultsFromAPI(results){
                     });
 
 
-
                 }
-                // console.log("filteredResults ", filteredResults);
+                // return filteredResults;
+
+                console.log("filteredResults ", filteredResults);
+                // sendResultsToBrowser(filteredResults);
+                return filteredResults;
             }
 
 
@@ -372,6 +394,7 @@ function getResultsFromAPI(results){
 
     });
 }
+
 
 //     var userId = req.session.userId;
 //     console.log('userID: ', userId);
@@ -407,26 +430,48 @@ app.get('*', function(req, res) {
 });
 
 // ====== CRONJOB SCHEDULER === //
-// run every minute
-cron.schedule("*/1 * * * *", function() {
+// // run every minute
+// cron.schedule("*/1 * * * *", function() {
+//
+//
+//     console.log("---------------------");
+//     console.log("Running send queries to API Cron Job");
+//     db.receiveAllTrackQueries()
+//         .then(results => {
+//             // console.log("Cron: results from receiveTrackQueries", results);
+//             prepareQueriesForAPI(results);
+//
+//         })
+//         .catch(err => {
+//             console.log('Error in receiveTrackQueries :', err);
+//
+//         });
+//
+//     //call function here
+//
+// });
 
 
-    console.log("---------------------");
-    console.log("Running send queries to API Cron Job");
-    db.receiveAllTrackQueries()
-        .then(results => {
-            console.log("results from receiveTrackQueries", results);
-            getResultsFromAPI(results);
+//========= NODEMAILER STUFF ========
+//
+// var transporter = nodemailer.createTransport({
+//  service: 'gmail',
+//  auth: {
+//         user: {gmail_user},
+//         pass: {gmail_pass}
+//     }
+// });
+//
+// const mailOptions = {
+//   from: 'info.spotifier@gmail.com', // sender address
+//   to: 'dominik.wenzel@outlook.com', // list of receivers
+//   subject: 'Subject of your email', // Subject line
+//   html: '<p>Your html here</p>'// plain text body
+// };
 
-        })
-        .catch(err => {
-            console.log('Error in receiveTrackQueries :', err);
 
-        });
 
-    //call function here
-
-});
+//============ SERVER STUFF =====
 
 server.listen(8080, function() {
     console.log("I'm listening.");

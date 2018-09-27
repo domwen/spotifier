@@ -30,8 +30,10 @@ exports.receiveTrackQueries = (userId) => {
 
 exports.receiveAllTrackQueries = () => {
     const q = `
-      SELECT query, id, user_id
+      SELECT queries.query, queries.id, queries.user_id, users.email
       FROM queries
+      JOIN users
+      ON user_id = users.id
       ORDER BY id DESC
       `;
     return db.query(q);
