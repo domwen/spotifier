@@ -1,9 +1,9 @@
 import axios from './axios';
 
 export async function receiveTrackQueries() {
-    console.log("ACTION receiveTrackQueries dispatched");
+    // console.log("ACTION receiveTrackQueries dispatched");
     const { data } = await axios.get('/receiveTrackQueries');
-    console.log('DATA in axios from receiveTrackQueries :', data);
+    // console.log('DATA in axios from receiveTrackQueries :', data);
     return {
         type: 'RECEIVE_TRACK_QUERIES',
         trackQueries: data
@@ -11,20 +11,31 @@ export async function receiveTrackQueries() {
 }
 
 export function saveTrackQuery(query) {
-    console.log("Inside ACTION saveTrackQuery: ", query);
+    // console.log("Inside ACTION saveTrackQuery: ", query);
     return axios
         .post(`/saveTrackQuery`, {
             query: query
         })
         .then(response => {
 
-            console.log(" ACTIONS.js: Response from saveTrackQuery:", response.data.query);
+            // console.log(" ACTIONS.js: Response from saveTrackQuery:", response.data.query);
             return {
                 type: 'SAVE_TRACK_QUERY',
                 trackQuery: response.data
             };
         })
         .catch(e => console.log('catch in saveTrackQuery: ', e));
+
+}
+
+export function renderResults(finalData) {
+    console.log("ACTION finalData", finalData);
+
+    return{
+        type: "RENDER_RESULTS",
+        results: finalData.data
+    };
+
 }
 
 // export function deleteTrack(query) {

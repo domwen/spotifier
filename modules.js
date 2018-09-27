@@ -8,7 +8,7 @@ module.exports.filterResults = function filterResults(bigFatResultsFromSpotify) 
 
     var filteredResults = [];
     for (let n=0; n < bigFatResultsFromSpotify.length; n++){
-        // console.log("resp[" + n + "].tracks.items", resp[n].tracks.items);
+        // console.log("bigFatResultsFromSpotify[" + n + "].tracks.items", bigFatResultsFromSpotify[n].tracks.items);
 
         // console.log("\n\n***** BEFORE FILTERING OBJECT\n");
 
@@ -18,7 +18,6 @@ module.exports.filterResults = function filterResults(bigFatResultsFromSpotify) 
         var items = bigFatResultsFromSpotify[n].tracks.items;
         // console.log("items in filterResults", items);
         var resultObj = null;
-
         for(let i = 0; i < items.length; i++)
         {
             resultObj = {};
@@ -27,13 +26,17 @@ module.exports.filterResults = function filterResults(bigFatResultsFromSpotify) 
             resultObj.trackId = items[i].id;
 
             // get track title
-            resultObj.trackTitle = items[i].name;
+            if (items.length == 0) {
+                resultObj.trackTitle = "No result found for query ID " + queryId;
+            } else {
+                resultObj.trackTitle = items[i].name;
+            }
 
             // get album image and artists
             resultObj.imageUrl = "";
             if(items[i].album.images != null && items[i].album.images.length > 0)
             {
-                resultObj.imageUrl = items[i].album.images[1].url;
+                resultObj.imageUrl = items[i].album.images[2].url;
             }
 
             resultObj.artistNames = "";
@@ -57,13 +60,15 @@ module.exports.filterResults = function filterResults(bigFatResultsFromSpotify) 
                 resultObj.externalUrl = items[i].external_urls.spotify;
             }
             // console.log("\n\n*** resultObj: " + resultObj.trackId + "\n\n");
+            resultObj.query =  bigFatResultsFromSpotify[n].query;
+
             filteredResults.push(resultObj);
 
 
 
-            db.saveFilteredResultsInDb(resultObj.trackId, resultObj.trackTitle, resultObj.imageUrl, resultObj.artistNames, resultObj.externalUrl, queryId, userIdFromResp).then(resp =>{
-                // console.log("Resp from saveFilteredResultsInDb ", resp);
-            });
+            db.saveFilteredResultsInDb(resultObj.trackId, resultObj.trackTitle, resultObj.imageUrl, resultObj.artistNames, resultObj.externalUrl, queryId, userIdFromResp);
+            // console.log("Resp from saveFilteredResultsInDb ", resp);
+
 
 
         }
@@ -73,7 +78,7 @@ module.exports.filterResults = function filterResults(bigFatResultsFromSpotify) 
         // sendResultsToBrowser(filteredResults);
 
     }
- return filteredResults;
+    return filteredResults ;
 };
 
 module.exports.prepareQueriesForAPI = function prepareQueriesForAPI(results){
@@ -83,10 +88,12 @@ module.exports.prepareQueriesForAPI = function prepareQueriesForAPI(results){
         var queryObj = {};
         queryObj.queryId = results.rows[i].id;
         queryObj.userId = results.rows[i].user_id;
+        queryObj.query = results.rows[i].query;
         queryObj.queryString = querystring.stringify({query: results.rows[i].query});
         queries.push(queryObj);
         // console.log('results from queryObj.queryString: ', results.rows[i].query);
     }
+    // console.log("***queries***" ,queries);
     return queries;
 
 };
@@ -122,6 +129,7 @@ module.exports.getResults = function getResults(token, queryObj) {
                 var jsonObj = JSON.parse(body);
                 jsonObj.queryId = queryObj.queryId;
                 jsonObj.userId = queryObj.userId;
+                jsonObj.query = queryObj.query;
                 resolve(jsonObj);
             });
 

@@ -17,7 +17,7 @@
 		font-size: 100%;
 		font: inherit;
 		vertical-align: baseline;
-	
+
 	}
 
 	article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
@@ -1916,7 +1916,7 @@
 		padding: 0 1em;
 		text-decoration: none;
 		width: 80%
-		
+
 	}
 
 		input[type="text"]:invalid,
@@ -3103,7 +3103,7 @@
 					}
 
 		.wrapper.style2 {
-			background-color: #1E2832;
+			background-color: #51BAA4;
 			color: rgba(255, 255, 255, 0.75);
 		}
 

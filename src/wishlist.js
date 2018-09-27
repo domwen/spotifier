@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import {saveTrackQuery, receiveTrackQueries} from "./actions";
+import {saveTrackQuery, receiveTrackQueries, renderResults} from "./actions";
 import axios from './axios';
 
 
@@ -9,6 +9,8 @@ class Wishlist extends Component {
         super();
         this.state = {};
         this.saveTrackQuery = this.saveTrackQuery.bind(this);
+        this.sendQueries = this.sendQueries.bind(this);
+
     }
     componentDidMount() {
         // console.log("this.elem ", this.elem);
@@ -16,7 +18,7 @@ class Wishlist extends Component {
         //     return;
         // }
         axios.get("/receiveTrackQueries").then(trackQueries => {
-            console.log("After Axios get > trackQueries ", trackQueries);
+            // console.log("After Axios get > trackQueries ", trackQueries);
             this.props.dispatch(receiveTrackQueries(trackQueries));
 
         });
@@ -40,7 +42,8 @@ class Wishlist extends Component {
 
     sendQueries() {
         axios.get("/sendQueries").then(finalData => {
-            console.log("results from sendQueries", finalData);
+            console.log("Wishlist.js: results from sendQueries", finalData);
+            this.props.dispatch(renderResults(finalData));
         });
     }
 
@@ -92,6 +95,45 @@ class Wishlist extends Component {
                                 />
                             </div>
                         </article>
+
+
+                        <article className="wrapper style2 special">
+                            <div className="content">
+                                <h2>Your results</h2>
+
+                                <div className="table-wrapper">
+
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Cover image</th>
+                                                <th>Artist name</th>
+                                                <th>Track title</th>
+                                                <th>Original query</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {this.props.results && this.props.results.map (result => (
+                                                // <div key={result.trackId}>
+                                                //     <p>{result.trackTitle}</p>
+                                                // </div>
+
+                                                <tr key={result.trackId}>
+
+                                                    <td><a href={result.externalUrl} ><img src={result.imageUrl} alt="cover image" /></a></td>
+                                                    <td>{result.artistNames}</td>
+                                                    <td>{result.trackTitle}</td>
+                                                    <td>{result.query}</td>
+
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+
+                            </div>
+                        </article>
                     </div>
                 </section>
 
@@ -102,10 +144,11 @@ class Wishlist extends Component {
 }
 
 const mapsStateToProps = state => {
-    console.log("Wishlist mapStateToProps: ", state.trackQueries );
+    console.log("Wishlist mapStateToProps: ", state.results );
     // state = global redux state
     return {
-        trackQueries: state.trackQueries
+        trackQueries: state.trackQueries,
+        results: state.results
     };
 };
 

@@ -261,7 +261,7 @@ app.get('/receiveTrackQueries', (req, res) => {
 //========  SEND QUERIES TO SAPI  =====
 app.get("/sendQueries", (req, res) => {
     var userId = req.session.userId;
-    console.log('userID: ', userId);
+    // console.log('userID: ', userId);
 
     db.receiveTrackQueries(userId)
 
@@ -284,14 +284,14 @@ app.get("/sendQueries", (req, res) => {
                     return Promise.all (arrayOfAPIResults)
 
                         .then(bigFatResultsFromSpotify => {
-                            console.log("Resp from Promise all arrayOfAPIResults:  ", bigFatResultsFromSpotify);
+                            // console.log("Resp from Promise all arrayOfAPIResults:  ", bigFatResultsFromSpotify);
 
                             var finalData = filterResults(bigFatResultsFromSpotify);
                             console.log("FINAL DATA ", finalData);
                             res.json(finalData);
                         });
 
-                }); //closes token =>
+                });
 
 
         })
@@ -344,16 +344,40 @@ app.get('*', function(req, res) {
 });
 
 // ====== CRONJOB SCHEDULER === //
-// // run every minute
-// cron.schedule("*/1 * * * *", function() {
+// run every minute
+// cron.schedule("*/10 * * * *", function() {
 //
 //
 //     console.log("---------------------");
 //     console.log("Running send queries to API Cron Job");
 //     db.receiveAllTrackQueries()
-//         .then(results => {
-//             // console.log("Cron: results from receiveTrackQueries", results);
-//             prepareQueriesForAPI(results);
+//         .then(queriesFromDb => {
+//         // console.log("results queriesFromDb", queriesFromDb);
+//             const preparedQueriesForApi = prepareQueriesForAPI(queriesFromDb);
+//             // console.log("preparedQueriesForApi ", preparedQueriesForApi);
+//
+//             return getToken()
+//
+//                 .then(token => {
+//                 // console.log("TOKEN", token);
+//                     var arrayOfAPIResults = [];
+//
+//                     for (let i = 0; i <     preparedQueriesForApi.length; i++) {
+//                         arrayOfAPIResults.push(getResults(token, preparedQueriesForApi[i]));
+//                     }
+//                     // console.log("arrayOfAPIResults ", arrayOfAPIResults);
+//
+//                     return Promise.all (arrayOfAPIResults)
+//
+//                         .then(bigFatResultsFromSpotify => {
+//                             console.log("Resp from Promise all arrayOfAPIResults:  ", bigFatResultsFromSpotify);
+//
+//                             var finalData = filterResults(bigFatResultsFromSpotify);
+//                             console.log("FINAL DATA ", finalData);
+//                         });
+//
+//                 });
+//
 //
 //         })
 //         .catch(err => {

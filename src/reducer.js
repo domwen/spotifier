@@ -12,6 +12,14 @@ export default function Reducer(state = {}, action) {
         };
         console.log("REDUCER trackQueries: ", state.trackQueries);
     }
+
+    if (action.type == 'RENDER_RESULTS') {
+        state = {
+            ...state,
+            results: action.results
+        };
+        console.log("REDUCER state.results: ", state.results);
+    }
     // if (action.type == 'UNFRIEND') {
     //     console.log('Action in UNFRIEND!: ', action);
     //     state = {
