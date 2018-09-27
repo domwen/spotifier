@@ -1,5 +1,5 @@
 const spicedPg = require('spiced-pg');
-const { pgUser, pgPw } = require('.././secrets.json');
+const { pgUser, pgPw } = require('./secrets.json');
 
 var dbUrl =
     process.env.DATABASE_URL ||

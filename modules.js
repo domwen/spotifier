@@ -1,9 +1,99 @@
 const { spotify_ID, spotify_secret } = require('./secrets.json');
 const https = require('https');
+const db = require("./db.js");
+const querystring = require('querystring');
+
+
+module.exports.filterResults = function filterResults(bigFatResultsFromSpotify) {
+
+    var filteredResults = [];
+    for (let n=0; n < bigFatResultsFromSpotify.length; n++){
+        // console.log("resp[" + n + "].tracks.items", resp[n].tracks.items);
+
+        // console.log("\n\n***** BEFORE FILTERING OBJECT\n");
+
+        var queryId = bigFatResultsFromSpotify[n].queryId;
+        var userIdFromResp = bigFatResultsFromSpotify[n].userId;
+
+        var items = bigFatResultsFromSpotify[n].tracks.items;
+        // console.log("items in filterResults", items);
+        var resultObj = null;
+
+        for(let i = 0; i < items.length; i++)
+        {
+            resultObj = {};
+            // console.log("items "+ i + " :", items[i]);
+            // get track id
+            resultObj.trackId = items[i].id;
+
+            // get track title
+            resultObj.trackTitle = items[i].name;
+
+            // get album image and artists
+            resultObj.imageUrl = "";
+            if(items[i].album.images != null && items[i].album.images.length > 0)
+            {
+                resultObj.imageUrl = items[i].album.images[1].url;
+            }
+
+            resultObj.artistNames = "";
+            if(items[i].album.artists != null && items[i].album.artists.length > 0)
+            {
+                var j;
+                for(j = 0; j < items[i].album.artists.length; j++)
+                {
+                    resultObj.artistNames += items[i].album.artists[j].name + ", ";
+                }
+            }
+            if(resultObj.artistNames.lastIndexOf(",") != -1)
+            {
+                resultObj.artistNames = resultObj.artistNames.substr(0, resultObj.artistNames.lastIndexOf(","));
+            }
+
+            // get external Url
+            resultObj.externalUrl = "";
+            if(items[i].external_urls.spotify != null)
+            {
+                resultObj.externalUrl = items[i].external_urls.spotify;
+            }
+            // console.log("\n\n*** resultObj: " + resultObj.trackId + "\n\n");
+            filteredResults.push(resultObj);
+
+
+
+            db.saveFilteredResultsInDb(resultObj.trackId, resultObj.trackTitle, resultObj.imageUrl, resultObj.artistNames, resultObj.externalUrl, queryId, userIdFromResp).then(resp =>{
+                // console.log("Resp from saveFilteredResultsInDb ", resp);
+            });
+
+
+        }
+        // return filteredResults;
+
+        // console.log("filteredResults ", filteredResults);
+        // sendResultsToBrowser(filteredResults);
+
+    }
+ return filteredResults;
+};
+
+module.exports.prepareQueriesForAPI = function prepareQueriesForAPI(results){
+    var queries = [];
+
+    for (let i = 0; i < results.rows.length; i++) {
+        var queryObj = {};
+        queryObj.queryId = results.rows[i].id;
+        queryObj.userId = results.rows[i].user_id;
+        queryObj.queryString = querystring.stringify({query: results.rows[i].query});
+        queries.push(queryObj);
+        // console.log('results from queryObj.queryString: ', results.rows[i].query);
+    }
+    return queries;
+
+};
 
 module.exports.getResults = function getResults(token, queryObj) {
 
-    console.log("stringifiedQuery", queryObj);
+    // console.log("stringifiedQuery", queryObj);
     return new Promise((resolve, reject) => {
         var options = {
             method: 'GET',

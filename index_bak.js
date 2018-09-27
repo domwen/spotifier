@@ -4,14 +4,14 @@ const server = require('http').Server(app);
 // const io = require('socket.io')(server, { origins: 'localhost:8080' });
 const compression = require('compression');
 
-const db = require('./db');
+const db = require('./src/db');
 const { hashPass, checkPass } = require('./src/hash');
 // const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const s3 = require('./s3.js');
 const config = require('./config.json');
-// const querystring = require('querystring');
-const {getToken, getResults, prepareQueriesForAPI, filterResults} = require("./modules.js");
+const querystring = require('querystring');
+const modules = require("./modules.js");
 const cron = require("node-cron");
 const nodemailer = require("nodemailer");
 const {gmail_user, gmail_pass} = require("./secrets.json");
@@ -247,11 +247,11 @@ app.get('/receiveTrackQueries', (req, res) => {
     console.log('userID: ', userId);
     db.receiveTrackQueries(userId)
         .then(results => {
-            console.log('APP GET: results from receiveTrackQueries: ', results.rows);
+            console.log('results from receiveTrackQueries: ', results.rows);
             res.json(results.rows);
         })
         .catch(err => {
-            console.log('APP GET: Error in receiveTrackQueries :', err);
+            console.log('Error in receiveTrackQueries :', err);
             res.status(500).json({
                 success: false
             });
@@ -262,41 +262,27 @@ app.get('/receiveTrackQueries', (req, res) => {
 app.get("/sendQueries", (req, res) => {
     var userId = req.session.userId;
     console.log('userID: ', userId);
-
     db.receiveTrackQueries(userId)
+        .then(results => {
+            console.log("results from receiveTrackQueries", results);
+            prepareQueriesForAPI(results)
 
-        .then(queriesFromDb => {
-            // console.log("results queriesFromDb", queriesFromDb);
-            const preparedQueriesForApi = prepareQueriesForAPI(queriesFromDb);
-            // console.log("preparedQueriesForApi ", preparedQueriesForApi);
+                .then(resultsFromAPI => {
+                    console.log("resultsFromAPI", resultsFromAPI);
+                    res.json(resultsFromAPI);
+                })
 
-            return getToken()
-
-                .then(token => {
-                    // console.log("TOKEN", token);
-                    var arrayOfAPIResults = [];
-
-                    for (let i = 0; i <     preparedQueriesForApi.length; i++) {
-                        arrayOfAPIResults.push(getResults(token, preparedQueriesForApi[i]));
-                    }
-                    // console.log("arrayOfAPIResults ", arrayOfAPIResults);
-
-                    return Promise.all (arrayOfAPIResults)
-
-                        .then(bigFatResultsFromSpotify => {
-                            console.log("Resp from Promise all arrayOfAPIResults:  ", bigFatResultsFromSpotify);
-
-                            var finalData = filterResults(bigFatResultsFromSpotify);
-                            console.log("FINAL DATA ", finalData);
-                            res.json(finalData);
-                        });
-
-                }); //closes token =>
-
+                .catch(err => {
+                    console.log('Error in resultsFromAPI :', err);
+                    res.status(500).json({
+                        success: false
+                    });
+                });
 
         })
+
         .catch(err => {
-            console.log('Error after receiveTrackQueries :', err);
+            console.log('Error in receiveTrackQueries :', err);
             res.status(500).json({
                 success: false
             });
@@ -306,8 +292,108 @@ app.get("/sendQueries", (req, res) => {
 
 
 
+function prepareQueriesForAPI(results){
+    var queries = [];
+
+    for (let i = 0; i < results.rows.length; i++) {
+        var queryObj = {};
+        queryObj.queryId = results.rows[i].id;
+        queryObj.userId = results.rows[i].user_id;
+        queryObj.queryString = querystring.stringify({query: results.rows[i].query});
+        queries.push(queryObj);
+        // console.log('results from queryObj.queryString: ', results.rows[i].query);
+
+    }
 
 
+
+    modules.getToken().then(function(token) {
+        // console.log("TOKEN", token);
+        var arrayOfQueries = [];
+        for (let i = 0; i < queries.length; i++) {
+            arrayOfQueries.push(modules.getResults(token, queries[i]));
+        }
+        // console.log("arrayOfQueries ", arrayOfQueries);
+        return Promise.all (arrayOfQueries).then(resp => {
+            // console.log("Resp from Promise all arrayOfQueries:  ", resp);
+            for (let n=0; n < resp.length; n++){
+                // console.log("resp[" + n + "].tracks.items", resp[n].tracks.items);
+
+                // console.log("\n\n***** BEFORE FILTERING OBJECT\n");
+
+                var queryId = resp[n].queryId;
+                var userIdFromResp = resp[n].userId;
+
+                var items = resp[n].tracks.items;
+                var filteredResults = [];
+                var resultObj = null;
+
+                for(let i = 0; i < items.length; i++)
+                {
+                    resultObj = new Object();
+                    // console.log("items "+ i + " :", items[i]);
+                    // get track id
+                    resultObj.trackId = items[i].id;
+
+                    // get track title
+                    resultObj.trackTitle = items[i].name;
+
+                    // get album image and artists
+                    resultObj.imageUrl = "";
+                    if(items[i].album.images != null && items[i].album.images.length > 0)
+                    {
+                        resultObj.imageUrl = items[i].album.images[1].url;
+                    }
+
+                    resultObj.artistNames = "";
+                    if(items[i].album.artists != null && items[i].album.artists.length > 0)
+                    {
+                        var j;
+                        for(j = 0; j < items[i].album.artists.length; j++)
+                        {
+                            resultObj.artistNames += items[i].album.artists[j].name + ", ";
+                        }
+                    }
+                    if(resultObj.artistNames.lastIndexOf(",") != -1)
+                    {
+                        resultObj.artistNames = resultObj.artistNames.substr(0, resultObj.artistNames.lastIndexOf(","));
+                    }
+
+                    // get external Url
+                    resultObj.externalUrl = "";
+                    if(items[i].external_urls.spotify != null)
+                    {
+                        resultObj.externalUrl = items[i].external_urls.spotify;
+                    }
+                    // console.log("\n\n*** resultObj: " + resultObj.trackId + "\n\n");
+                    filteredResults.push(resultObj);
+
+
+
+                    db.saveFilteredResultsInDb(resultObj.trackId, resultObj.trackTitle, resultObj.imageUrl, resultObj.artistNames, resultObj.externalUrl, queryId, userIdFromResp).then(resp =>{
+                    });
+
+
+                }
+                // return filteredResults;
+
+                console.log("filteredResults ", filteredResults);
+                // sendResultsToBrowser(filteredResults);
+                return filteredResults;
+            }
+
+
+
+        }).catch(err => {
+            console.log('Error after getToken :', err);
+
+        });
+
+    })        .catch(err => {
+        console.log('Error after arrayOfQueries :', err);
+
+    });
+}
 
 
 //     var userId = req.session.userId;

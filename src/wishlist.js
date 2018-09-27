@@ -39,8 +39,8 @@ class Wishlist extends Component {
     }
 
     sendQueries() {
-        axios.get("/sendQueries").then(results => {
-            console.log("results from sendQueries", results);
+        axios.get("/sendQueries").then(finalData => {
+            console.log("results from sendQueries", finalData);
         });
     }
 
@@ -95,7 +95,7 @@ class Wishlist extends Component {
                     </div>
                 </section>
 
-            
+
             </div>
         );
     }
