@@ -345,49 +345,49 @@ app.get('*', function(req, res) {
 
 // ====== CRONJOB SCHEDULER === //
 // run every minute
-// cron.schedule("*/10 * * * *", function() {
-//
-//
-//     console.log("---------------------");
-//     console.log("Running send queries to API Cron Job");
-//     db.receiveAllTrackQueries()
-//         .then(queriesFromDb => {
-//         // console.log("results queriesFromDb", queriesFromDb);
-//             const preparedQueriesForApi = prepareQueriesForAPI(queriesFromDb);
-//             // console.log("preparedQueriesForApi ", preparedQueriesForApi);
-//
-//             return getToken()
-//
-//                 .then(token => {
-//                 // console.log("TOKEN", token);
-//                     var arrayOfAPIResults = [];
-//
-//                     for (let i = 0; i <     preparedQueriesForApi.length; i++) {
-//                         arrayOfAPIResults.push(getResults(token, preparedQueriesForApi[i]));
-//                     }
-//                     // console.log("arrayOfAPIResults ", arrayOfAPIResults);
-//
-//                     return Promise.all (arrayOfAPIResults)
-//
-//                         .then(bigFatResultsFromSpotify => {
-//                             console.log("Resp from Promise all arrayOfAPIResults:  ", bigFatResultsFromSpotify);
-//
-//                             var finalData = filterResults(bigFatResultsFromSpotify);
-//                             console.log("FINAL DATA ", finalData);
-//                         });
-//
-//                 });
-//
-//
-//         })
-//         .catch(err => {
-//             console.log('Error in receiveTrackQueries :', err);
-//
-//         });
-//
-//     //call function here
-//
-// });
+cron.schedule("*/10 * * * *", function() {
+
+
+    console.log("---------------------");
+    console.log("Running send queries to API Cron Job");
+    db.receiveTrackQueries(5)
+        .then(queriesFromDb => {
+        // console.log("results queriesFromDb", queriesFromDb);
+            const preparedQueriesForApi = prepareQueriesForAPI(queriesFromDb);
+            // console.log("preparedQueriesForApi ", preparedQueriesForApi);
+
+            return getToken()
+
+                .then(token => {
+                // console.log("TOKEN", token);
+                    var arrayOfAPIResults = [];
+
+                    for (let i = 0; i <     preparedQueriesForApi.length; i++) {
+                        arrayOfAPIResults.push(getResults(token, preparedQueriesForApi[i]));
+                    }
+                    // console.log("arrayOfAPIResults ", arrayOfAPIResults);
+
+                    return Promise.all (arrayOfAPIResults)
+
+                        .then(bigFatResultsFromSpotify => {
+                            console.log("Resp from Promise all arrayOfAPIResults:  ", bigFatResultsFromSpotify);
+
+                            var finalData = filterResults(bigFatResultsFromSpotify);
+                            console.log("CRON SUCCESS FINAL DATA ", finalData);
+                        });
+
+                });
+
+
+        })
+        .catch(err => {
+            console.log('Error in receiveTrackQueries :', err);
+
+        });
+
+    //call function here
+
+});
 
 
 //========= NODEMAILER STUFF ========

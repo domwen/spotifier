@@ -4,6 +4,7 @@ const db = require("./db.js");
 const querystring = require('querystring');
 
 
+
 module.exports.filterResults = function filterResults(bigFatResultsFromSpotify) {
 
     var filteredResults = [];
